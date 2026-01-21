@@ -1,0 +1,184 @@
+<div class="page-container">
+    <app-sidebar></app-sidebar>
+
+    <div class="content-container">
+        <button class="back-button" (click)="navigateBack()">
+            <ng-icon name="phosphorCaretLeft"></ng-icon>
+            Back to Operational Insights
+        </button>
+
+        <main class="main-content">
+            <header class="header-section">
+                <div class="title-container">
+                    <ng-icon name="phosphorMagnifyingGlassBold" style="font-size: 50px;"></ng-icon>
+                    <div class="title-text-container">
+                        <h1>Anomaly Insights</h1>
+                        <p>View metric trends, anomaly score, correlation and predictions.</p>
+                    </div>
+                </div>
+                <div class="date-picker-shell">
+                    <div class="picker-field">
+                        <label for="startDate">From:</label>
+                        <p-datepicker
+                            inputId="startDate"
+                            name="startDate"
+                            [(ngModel)]="dateRange.start"
+                            [ngModelOptions]="{ standalone: true }"
+                            [showTime]="true"
+                            hourFormat="24"
+                            [showIcon]="false"
+                            panelStyleClass="agent-date-panel"
+                            dateFormat="dd.mm.yy"
+                            placeholder="Select start">
+                        </p-datepicker>
+                    </div>
+                    <div class="picker-field">
+                        <label for="endDate">To:</label>
+                        <p-datepicker
+                            inputId="endDate"
+                            name="endDate"
+                            [(ngModel)]="dateRange.end"
+                            [ngModelOptions]="{ standalone: true }"
+                            [showTime]="true"
+                            hourFormat="24"
+                            [showIcon]="false"
+                            panelStyleClass="agent-date-panel"
+                            dateFormat="dd.mm.yy"
+                            placeholder="Select end">
+                        </p-datepicker>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-body">
+            <!-- Summary Card -->
+            <div class="summary-card">
+                <div class="summary-left">
+                    <div class="cluster-info">
+                        <span class="bullet">●</span>
+                        <span>{{ messageClusterInfo }}</span>
+                    </div>
+                    <div class="entity-info">
+                        <span class="entity-dot"></span>
+                        <span class="entity-name">{{ anomalyName }}</span>
+                    </div>
+                </div>
+                <div class="summary-center">
+                    <span class="status-label">{{ anomalyStatus }}</span>
+                    <span class="severity-badge" [ngClass]="anomalySeverity.toLowerCase()">{{ anomalySeverity }}</span>
+                </div>
+                <div class="summary-right">
+                    <div class="timeline-labels">
+                        <span>{{ timeRangeStart }}</span>
+                        <span>{{ timeRangeEnd }}</span>
+                    </div>
+                    <div class="timeline-bar">
+                        <div class="dash"></div>
+                        <div class="dash"></div>
+                        <div class="dash"></div>
+                        <div class="dash active"></div>
+                        <div class="dash active"></div>
+                        <div class="dash active"></div>
+                        <div class="dash active"></div>
+                        <div class="dash"></div>
+                        <div class="dash"></div>
+                        <div class="dash"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="main-grid">
+                <!-- Left Column: Trend Chart -->
+                <div class="trend-section">
+                    <h3 class="section-title">Service Response Time Trend</h3>
+                    <div class="trend-chart-container" #trendChart></div>
+                    <div class="predict-button-wrapper">
+                        <button class="predict-btn" (click)="predictTrend()">Predict Trend</button>
+                    </div>
+                </div>
+
+                <!-- Right Column: AI Insights -->
+                <div class="ai-insights-section">
+                    <h3 class="section-title">AI Insights & Recommendations</h3>
+                    <div class="insights-accordion">
+                        @for (insight of aiInsights; track insight.title) {
+                            <div class="insight-item" [class.expanded]="insight.expanded">
+                                <div class="insight-header" (click)="toggleInsight(insight)">
+                                    <span class="insight-title">{{ insight.title }}</span>
+                                    <ng-icon name="phosphorCaretDown" class="caret-icon"></ng-icon>
+                                </div>
+                                @if (insight.expanded && insight.content) {
+                                    <div class="insight-content">
+                                        <p>{{ insight.content }}</p>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section -->
+            <div class="bottom-grid">
+                <!-- System Topology -->
+                <div class="topology-section">
+                    <h3 class="section-title">System Topology</h3>
+                    <div class="topology-chart-container" #topologyChart></div>
+                </div>
+
+                <!-- Cross-Transaction Correlation Analysis -->
+                <div class="correlation-section">
+                    <h3 class="section-title">Cross-Transaction Correlation Analysis</h3>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-label">Total Correlations:</span>
+                            <span class="stat-value">{{ correlationStats.totalCorrelations }}</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Average<br>Correlation:</span>
+                            <span class="stat-value highlight">{{ correlationStats.averageCorrelation }}</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Strong Correlations:</span>
+                            <span class="stat-value">{{ correlationStats.strongCorrelations }}</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Moderate Correlations:</span>
+                            <span class="stat-value">{{ correlationStats.moderateCorrelations }}</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Weak Correlations:</span>
+                            <span class="stat-value">{{ correlationStats.weakCorrelations }}</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Analysis<br>Period:</span>
+                            <span class="stat-value small">{{ correlationStats.analysisPeriod }}</span>
+                        </div>
+                    </div>
+
+                    <div class="score-filter">
+                        <ng-icon name="phosphorFunnel"></ng-icon>
+                        <span>Score</span>
+                        <ng-icon name="phosphorCaretDown"></ng-icon>
+                    </div>
+
+                    <div class="score-list">
+                        @for (item of correlationScores; track $index) {
+                            <div class="score-item">
+                                <span class="score-value">{{ item.score }}</span>
+                                <div class="score-actions">
+                                    <span class="score-icon">📊</span>
+                                    <span class="score-label" [class.strong]="item.label === 'STRONG'">{{ item.label }}</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            </div>
+        </main>
+    </div>
+</div>
+

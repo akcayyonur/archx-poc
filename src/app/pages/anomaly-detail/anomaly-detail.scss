@@ -1,0 +1,611 @@
+$bg: #040517;
+$panel-bg: #141326;
+$panel-header: #2D2C3A;
+$panel-border: rgba(255, 255, 255, 0.08);
+$text: #EDEAF1;
+$muted: rgba(245, 247, 255, 0.65);
+$accent: #a40ffc;
+$success: #4ade80;
+$warning: #facc15;
+$danger: #fd5151;
+$info: #60a5fa;
+$orange: #fb923c;
+$lime: #C8E972;
+
+* {
+  font-family: 'Inter', sans-serif;
+  color: $text;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  background: $bg;
+  min-height: 100vh;
+}
+
+.content-container {
+  flex: 1;
+  margin-left: 87px;
+  padding: 40px 22px 40px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// Back Button
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 28px;
+  color: $text;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: fit-content;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  ng-icon {
+    font-size: 16px;
+  }
+}
+
+// Header Section
+.header-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1.5rem;
+
+  ng-icon {
+    font-size: 70px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.title-text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  h1 {
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 39px;
+    margin: 0;
+  }
+
+  p {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: $muted;
+    margin: 0;
+  }
+}
+
+// Date Picker
+.date-picker-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 28px;
+  background: #1F1E33;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.picker-field {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-left: 12px;
+
+  label {
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: $muted;
+    font-weight: 600;
+  }
+}
+
+:host ::ng-deep .date-picker-shell .p-datepicker .p-inputtext {
+  border-radius: 18px;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: #2F2E43;
+  padding: 8px 12px;
+  width: 150px;
+  text-align: center;
+}
+
+// Main Content Wrapper (background layer like entity-insights)
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #141326;
+  border: 1px solid #302D58;
+  border-radius: 24px;
+  padding: 34px 28px 28px 28px;
+  position: relative;
+}
+
+// Content Body
+.content-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// Summary Card
+.summary-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #2D2C3A;
+  border-radius: 8px;
+}
+
+.summary-left {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.cluster-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: $text;
+
+  .bullet {
+    color: #9C7FCF;
+  }
+}
+
+.entity-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.entity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4A90A4;
+}
+
+.entity-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: $lime;
+}
+
+.summary-center {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.status-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: $text;
+}
+
+.severity-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 12px;
+  min-width: 80px;
+
+  &.critical {
+    background: rgba($danger, 0.15);
+    border-color: rgba($danger, 0.4);
+    color: $danger;
+  }
+
+  &.high {
+    background: rgba($orange, 0.15);
+    border-color: rgba($orange, 0.4);
+    color: $orange;
+  }
+
+  &.moderate {
+    background: rgba($warning, 0.15);
+    border-color: rgba($warning, 0.45);
+    color: $warning;
+  }
+
+  &.low {
+    background: rgba($info, 0.15);
+    border-color: rgba($info, 0.45);
+    color: $info;
+  }
+}
+
+.summary-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: $muted;
+  width: 180px;
+  padding: 0 4px;
+}
+
+.timeline-bar {
+  display: flex;
+  gap: 4px;
+
+  .dash {
+    width: 14px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+
+    &.active {
+      background: $danger;
+    }
+  }
+}
+
+// Main Grid
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 400;
+  color: #fff;
+  margin: 0;
+  padding: 12px 24px;
+  background: $panel-header;
+  border-radius: 12px 12px 0 0;
+}
+
+// Trend Section
+.trend-section {
+  display: flex;
+  flex-direction: column;
+  background: #201F32;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.trend-chart-container {
+  width: 100%;
+  height: 280px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.predict-button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 20px 20px 20px;
+}
+
+.predict-btn {
+  padding: 10px 24px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  color: $text;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+// AI Insights Section
+.ai-insights-section {
+  display: flex;
+  flex-direction: column;
+  background: #201F32;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.insights-accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+.insight-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.2s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.expanded {
+    .caret-icon {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.insight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+}
+
+.insight-title {
+  font-size: 16px;
+  font-weight: 400;
+  color: $text;
+}
+
+.caret-icon {
+  font-size: 18px;
+  color: $muted;
+  transition: transform 0.2s ease;
+}
+
+.insight-content {
+  padding: 0 24px 20px 24px;
+
+  p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: $muted;
+    margin: 0;
+    white-space: pre-line;
+  }
+}
+
+// Bottom Grid
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+// Topology Section
+.topology-section {
+  display: flex;
+  flex-direction: column;
+  background: #201F32;
+  border-radius: 12px;
+  overflow: hidden;
+
+  .section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.topology-chart-container {
+  width: 100%;
+  height: 380px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+// Correlation Section
+.correlation-section {
+  display: flex;
+  flex-direction: column;
+  background: #201F32;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+// Stats Grid - individual boxes for each stat (3x2 layout)
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 8px 12px;
+}
+
+.stat-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #2D2C3A;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(217, 217, 217, 0.8);
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 500;
+  color: #FFFFFF;
+  margin-left: auto;
+
+  &.highlight {
+    color: $lime;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  &.small {
+    font-size: 10px;
+    font-weight: 500;
+    color: #FFFFFF;
+    line-height: 1.2;
+    text-align: right;
+  }
+}
+
+.score-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  margin: 0 16px 16px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text;
+  cursor: pointer;
+  width: fit-content;
+
+  ng-icon {
+    font-size: 14px;
+    color: $muted;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.score-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px 16px 16px;
+  max-height: 220px;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+}
+
+.score-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 16px 32px;
+  background: #2D2C3A;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden; // Ensure glow doesn't spill awkwardly if positioned at edge
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 15%;
+    bottom: 15%;
+    width: 8px; // Thicker
+    background: #FF6F61; // Explicit bright red/coral
+    border-radius: 0 4px 4px 0;
+    box-shadow: 
+      0 0 10px rgba(255, 111, 97, 0.8),
+      0 0 20px rgba(255, 111, 97, 0.4),
+      2px 0 15px rgba(255, 111, 97, 0.6); // Strong glow
+  }
+}
+
+.score-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #fff;
+  z-index: 1; // Ensure text is above glow if overlaps
+}
+
+.score-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.score-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.score-label {
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: $muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+
+  &.strong {
+    background: rgba($lime, 0.15);
+    color: $lime;
+    border: 1px solid rgba($lime, 0.3);
+  }
+}

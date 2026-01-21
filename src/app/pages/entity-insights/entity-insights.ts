@@ -2,10 +2,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
+import { DialogModule } from 'primeng/dialog';
+import { SelectModule } from 'primeng/select';
+import { TextareaModule } from 'primeng/textarea';
 import { Sidebar } from '@shared/components/sidebar/sidebar';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { phosphorCaretLeft, phosphorCube } from '@ng-icons/phosphor-icons/regular';
+
 import { phosphorMagnifyingGlassBold } from '@ng-icons/phosphor-icons/bold';
+import { phosphorCaretLeft, phosphorCube, phosphorShareFat, phosphorCheck, phosphorEnvelope, phosphorTrendUp, phosphorTrendDown } from '@ng-icons/phosphor-icons/regular';
 import { ActivatedRoute, Router } from '@angular/router';
 
 interface Metric {
@@ -33,8 +37,8 @@ interface RecurringAnomaly {
 
 @Component({
   selector: 'app-entity-insights',
-  imports: [CommonModule, Sidebar, FormsModule, DatePickerModule, NgIcon],
-  viewProviders: [provideIcons({ phosphorCaretLeft, phosphorMagnifyingGlassBold, phosphorCube })],
+  imports: [CommonModule, Sidebar, FormsModule, DatePickerModule, NgIcon, DialogModule, SelectModule, TextareaModule],
+  viewProviders: [provideIcons({ phosphorCaretLeft, phosphorMagnifyingGlassBold, phosphorCube, phosphorShareFat, phosphorCheck, phosphorEnvelope, phosphorTrendUp, phosphorTrendDown })],
   templateUrl: './entity-insights.html',
   styleUrl: './entity-insights.scss',
 })
@@ -57,6 +61,32 @@ export class EntityInsights implements OnInit {
   anomalies: Anomaly[] = [];
   recurringAnomalies: RecurringAnomaly[] = [];
   chartPoints: any[] = [];
+
+  // Forward Anomaly Popup
+  showForwardPopup = false;
+  forwardOptions = ['Email', 'Jira', 'Slack', 'Microsoft Teams'];
+  selectedForwardOptions: string[] = [];
+
+  toggleForwardPopup() {
+    this.showForwardPopup = !this.showForwardPopup;
+  }
+
+  toggleForwardOption(option: string) {
+    const index = this.selectedForwardOptions.indexOf(option);
+    if (index > -1) {
+      this.selectedForwardOptions.splice(index, 1);
+    } else {
+      this.selectedForwardOptions.push(option);
+    }
+  }
+
+  confirmForward() {
+    console.log('Forwarding anomaly via:', this.selectedForwardOptions);
+    this.showForwardPopup = false;
+    this.selectedForwardOptions = [];
+  }
+
+
 
   ngOnInit() {
     // Get entity ID from route params
@@ -198,9 +228,62 @@ export class EntityInsights implements OnInit {
     ];
   }
 
+  // Dialog Properties
+  // Dialog Properties
+  forwardDialogVisible: boolean = false;
+  
+  // Data for the dialog form
+  dialogData = {
+    title: '',
+    severity: '',
+    assignedTeam: '',
+    status: '',
+    application: ''
+  };
+
+  availableTeams = ['Platform', 'SRE', 'DevOps', 'Product', 'DBA'];
+  severityOptions = ['Critical', 'High', 'Moderate'];
+
+  openForwardDialog() {
+      // Initialize with default values for a new forward action
+      this.dialogData = {
+          title: '', // User enters the title
+          severity: 'Critical', // Default severity
+          assignedTeam: 'Platform',
+          status: 'Open',
+          application: this.entityId
+      };
+      this.forwardDialogVisible = true;
+  }
+
+  closeForwardDialog() {
+      this.forwardDialogVisible = false;
+  }
+
+  submitForward() {
+      if (!this.dialogData.title) return; // Basic validation
+
+      // Add the new anomaly to the list
+      const newAnomaly: Anomaly = {
+          name: this.dialogData.title,
+          status: this.dialogData.severity as any,
+          team: this.dialogData.assignedTeam,
+          application: this.dialogData.application,
+          date: 'Just now' // Or current date
+      };
+
+      // Add to the beginning of the list
+      this.anomalies.unshift(newAnomaly);
+
+      console.log('Forwarding anomaly:', this.dialogData);
+      this.closeForwardDialog();
+  }
+
   navigateToOperationalInsights() {
     this.router.navigate(['/anomaly-insights']);
   }
+
+
 
   private static parseDateTime(value: string): Date | null {
     const trimmed = value.trim();

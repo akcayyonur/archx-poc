@@ -98,6 +98,10 @@ export const routes: Routes = [
         ]
     },
     {
+        path: 'anomaly-detail/:anomalyId',
+        loadComponent: () => import('@pages/anomaly-detail/anomaly-detail').then(m => m.AnomalyDetail)
+    },
+    {
         path: 'entity-insights/:entityId',
         loadComponent: () => import('@pages/entity-insights/entity-insights').then(m => m.EntityInsights)
     } 

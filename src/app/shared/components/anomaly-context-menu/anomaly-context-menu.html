@@ -1,0 +1,160 @@
+<div class="context-menu-wrapper"
+     *ngIf="visible"
+     [style.left.px]="position.x"
+     [style.top.px]="position.y"
+     (click)="$event.stopPropagation()">
+    
+    <div class="context-menu">
+        <!-- Create Annotation -->
+        <div class="menu-item has-submenu" 
+             (click)="toggleSubmenu('annotation')"
+             [class.active]="activeSubmenu === 'annotation'">
+            <ng-icon name="phosphorNotePencil"></ng-icon>
+            <span>Create Annotation</span>
+            <ng-icon name="phosphorCaretRight" class="caret"></ng-icon>
+        </div>
+
+        <!-- Severity - Dropdown below -->
+        <div class="menu-item-wrapper">
+            <div class="menu-item has-dropdown" 
+                 (click)="toggleSubmenu('severity')"
+                 [class.active]="activeSubmenu === 'severity'">
+                <ng-icon name="phosphorWarning"></ng-icon>
+                <span>Severity</span>
+                <ng-icon name="phosphorCaretRight" class="caret"></ng-icon>
+            </div>
+            <div class="dropdown-popup" *ngIf="activeSubmenu === 'severity'">
+                <div class="dropdown-item" *ngFor="let option of severityOptions" 
+                     (click)="selectOption('severity', option); $event.stopPropagation()"
+                     [class]="option.toLowerCase()">
+                    <span class="severity-dot"></span>
+                    {{ option }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Assign To -->
+        <div class="menu-item has-submenu" 
+             (click)="toggleSubmenu('assign')"
+             [class.active]="activeSubmenu === 'assign'">
+            <ng-icon name="phosphorUserPlus"></ng-icon>
+            <span>Assign to</span>
+            <ng-icon name="phosphorCaretRight" class="caret"></ng-icon>
+        </div>
+
+        <!-- Create Event -->
+        <div class="menu-item" (click)="selectOption('createEvent')">
+            <ng-icon name="phosphorCalendarPlus"></ng-icon>
+            <span>Create Event</span>
+        </div>
+
+        <!-- Priority - Dropdown below -->
+        <div class="menu-item-wrapper">
+            <div class="menu-item has-dropdown" 
+                 (click)="toggleSubmenu('priority')"
+                 [class.active]="activeSubmenu === 'priority'">
+                <ng-icon name="phosphorFlag"></ng-icon>
+                <span>Priority</span>
+                <ng-icon name="phosphorCaretRight" class="caret"></ng-icon>
+            </div>
+            <div class="dropdown-popup" *ngIf="activeSubmenu === 'priority'">
+                <div class="dropdown-item" *ngFor="let option of priorityOptions" 
+                     (click)="selectOption('priority', option); $event.stopPropagation()"
+                     [class]="option.toLowerCase()">
+                    <span class="priority-dot"></span>
+                    {{ option }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Status - Dropdown below -->
+        <div class="menu-item-wrapper">
+            <div class="menu-item has-dropdown" 
+                 (click)="toggleSubmenu('status')"
+                 [class.active]="activeSubmenu === 'status'">
+                <ng-icon name="phosphorCheckCircle"></ng-icon>
+                <span>Status</span>
+                <ng-icon name="phosphorCaretRight" class="caret"></ng-icon>
+            </div>
+            <div class="dropdown-popup" *ngIf="activeSubmenu === 'status'">
+                <div class="dropdown-item" *ngFor="let option of statusOptions" 
+                     (click)="selectOption('status', option); $event.stopPropagation()"
+                     [class]="option.toLowerCase()">
+                    <span class="status-dot"></span>
+                    {{ option }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Relate Selected -->
+        <div class="menu-item" (click)="selectOption('relateSelected')">
+            <ng-icon name="phosphorLink"></ng-icon>
+            <span>Relate selected</span>
+        </div>
+
+        <!-- Forward To -->
+        <div class="menu-item has-submenu" 
+             (click)="toggleSubmenu('forward')"
+             [class.active]="activeSubmenu === 'forward'">
+            <ng-icon name="phosphorShareNetwork"></ng-icon>
+            <span>Forward to</span>
+            <ng-icon name="phosphorCaretRight" class="caret"></ng-icon>
+        </div>
+
+        <!-- Footer -->
+        <div class="menu-footer">
+            <div class="footer-item">
+                <span class="footer-label">Related to:</span>
+                <span class="footer-value">{{ selectedAnomalies[0]?.entity || 'entity name' }}</span>
+            </div>
+            <div class="footer-item">
+                <span class="footer-label">Source:</span>
+                <span class="footer-value">ArchX anomaly engine</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Popup: Annotation -->
+    <div class="side-popup annotation-popup" *ngIf="activeSubmenu === 'annotation'">
+        <div class="side-popup-header">Create annotation...</div>
+        <textarea 
+            [(ngModel)]="annotationText" 
+            placeholder="Enter annotation..."
+            rows="3"></textarea>
+        <div class="side-popup-field">
+            <label>Business Service</label>
+            <select [(ngModel)]="selectedBusinessService">
+                <option value="">Business Service</option>
+                <option value="service1">Service 1</option>
+                <option value="service2">Service 2</option>
+            </select>
+        </div>
+        <div class="side-popup-actions">
+            <button class="btn-submit" (click)="submitAnnotation()">Save</button>
+        </div>
+    </div>
+
+    <!-- Side Popup: Assign To -->
+    <div class="side-popup assign-popup" *ngIf="activeSubmenu === 'assign'">
+        <div class="side-popup-field">
+            <input type="text" 
+                   [(ngModel)]="userSearchText" 
+                   placeholder="Type to search users"
+                   class="search-input" />
+        </div>
+        <div class="side-popup-actions">
+            <button class="btn-submit" (click)="confirmAssign()">Save</button>
+        </div>
+    </div>
+
+    <!-- Side Popup: Forward To -->
+    <div class="side-popup forward-popup" *ngIf="activeSubmenu === 'forward'">
+        <div class="forward-item" *ngFor="let option of forwardOptions" 
+             (click)="toggleForwardOption(option)">
+            {{ option }}
+        </div>
+        <div class="side-popup-actions">
+            <button class="btn-submit" (click)="confirmForward()">Save</button>
+        </div>
+    </div>
+</div>

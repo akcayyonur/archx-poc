@@ -8,11 +8,12 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { phosphorTrafficCone, phosphorSortAscending, phosphorSortDescending, phosphorInfo, phosphorCaretLeft, phosphorCaretRight, phosphorPulse, phosphorCornersOut, phosphorCloudArrowDown, phosphorCaretDown, phosphorHandPalm, phosphorCrop, phosphorArrowsLeftRight, phosphorMagnifyingGlassPlus, phosphorMagnifyingGlassMinus, phosphorArrowCounterClockwise } from '@ng-icons/phosphor-icons/regular';
 import { DEMO_ANOMALY_LIST } from '@shared/constants/demo-data.constants';
 import { AnomalyRecord } from '@shared/models/demo-data.model';
+import { AnomalyContextMenu, ContextMenuAction } from '@shared/components/anomaly-context-menu/anomaly-context-menu';
 import * as echarts from 'echarts';
 
 @Component({
   selector: 'app-anomaly-insights',
-  imports: [CommonModule, Sidebar, FormsModule, DatePickerModule, NgIcon],
+  imports: [CommonModule, Sidebar, FormsModule, DatePickerModule, NgIcon, AnomalyContextMenu],
   viewProviders: [provideIcons({ phosphorTrafficCone, phosphorSortAscending, phosphorSortDescending, phosphorInfo, phosphorCaretLeft, phosphorCaretRight, phosphorPulse, phosphorCornersOut, phosphorCloudArrowDown, phosphorCaretDown, phosphorHandPalm, phosphorCrop, phosphorArrowsLeftRight, phosphorMagnifyingGlassPlus, phosphorMagnifyingGlassMinus, phosphorArrowCounterClockwise })],
   templateUrl: './anomaly-insights.html',
   styleUrl: './anomaly-insights.scss'
@@ -41,11 +42,22 @@ export class AnomalyInsights implements AfterViewInit, OnDestroy {
   currentPage = 1;
   itemsPerPage = 5;
 
+  // Context menu properties
+  selectedAnomalies: AnomalyRecord[] = [];
+  contextMenuVisible = false;
+  contextMenuPosition = { x: 0, y: 0 };
+
   constructor(private router: Router) {
     // Removed randomization to use static demo data with full dates
   }
 
-  navigateToEntity(anomaly: AnomalyRecord): void {
+  navigateToAnomalyDetail(anomaly: AnomalyRecord): void {
+    this.router.navigate(['/anomaly-detail', anomaly.anomaly], {
+      state: { anomalyData: anomaly }
+    });
+  }
+
+  navigateToEntityInsights(anomaly: AnomalyRecord): void {
     this.router.navigate(['/entity-insights', anomaly.entity], {
       state: { anomalyData: anomaly }
     });
@@ -457,5 +469,86 @@ export class AnomalyInsights implements AfterViewInit, OnDestroy {
     const parsed = new Date(year, (month ?? 1) - 1, day, hour, minute);
 
     return isNaN(parsed.getTime()) ? null : parsed;
+  }
+
+  // Context menu methods
+  isAnomalySelected(anomaly: AnomalyRecord): boolean {
+    return this.selectedAnomalies.some(a => a.entity === anomaly.entity && a.anomaly === anomaly.anomaly);
+  }
+
+  toggleAnomalySelection(anomaly: AnomalyRecord): void {
+    const index = this.selectedAnomalies.findIndex(a => a.entity === anomaly.entity && a.anomaly === anomaly.anomaly);
+    if (index > -1) {
+      this.selectedAnomalies.splice(index, 1);
+    } else {
+      this.selectedAnomalies.push(anomaly);
+    }
+  }
+
+  onRowRightClick(event: MouseEvent, anomaly: AnomalyRecord): void {
+    event.preventDefault();
+    
+    // If right-clicked anomaly is not selected, select only it
+    if (!this.isAnomalySelected(anomaly)) {
+      this.selectedAnomalies = [anomaly];
+    }
+    
+    this.contextMenuPosition = { x: event.clientX, y: event.clientY };
+    this.contextMenuVisible = true;
+  }
+
+  onContextMenuAction(action: ContextMenuAction): void {
+    console.log('Context menu action:', action, 'Selected anomalies:', this.selectedAnomalies);
+    
+    // Update selected anomalies based on action type
+    this.selectedAnomalies.forEach(selectedAnomaly => {
+      const anomalyIndex = this.anomalies.findIndex(
+        a => a.entity === selectedAnomaly.entity && a.anomaly === selectedAnomaly.anomaly
+      );
+      
+      if (anomalyIndex > -1) {
+        switch (action.type) {
+          case 'severity':
+            if (action.value) {
+              this.anomalies[anomalyIndex].severity = action.value as 'Critical' | 'High' | 'Moderate' | 'Low';
+            }
+            break;
+          case 'status':
+            if (action.value) {
+              this.anomalies[anomalyIndex].status = action.value as 'Active' | 'Resolved' | 'Investigating';
+            }
+            break;
+          case 'priority':
+            // Priority is not in the current model, but we can add it as a property
+            console.log(`Priority set to ${action.value} for ${this.anomalies[anomalyIndex].entity}`);
+            break;
+          case 'createAnnotation':
+            console.log(`Annotation created: "${action.annotation}" for ${this.anomalies[anomalyIndex].entity}`);
+            break;
+          case 'assignTo':
+            console.log(`Assigned to ${action.value} for ${this.anomalies[anomalyIndex].entity}`);
+            break;
+          case 'createEvent':
+            console.log(`Event created for ${this.anomalies[anomalyIndex].entity}`);
+            break;
+          case 'relateSelected':
+            console.log(`Related to ${action.value} for ${this.anomalies[anomalyIndex].entity}`);
+            break;
+          case 'forwardTo':
+            console.log(`Forwarded for ${this.anomalies[anomalyIndex].entity}`);
+            break;
+        }
+      }
+    });
+
+    // Refresh the graph to reflect severity changes
+    this.updateGraph();
+    
+    // Clear selection after action
+    this.selectedAnomalies = [];
+  }
+
+  closeContextMenu(): void {
+    this.contextMenuVisible = false;
   }
 }

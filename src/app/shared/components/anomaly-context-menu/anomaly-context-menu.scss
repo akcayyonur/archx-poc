@@ -1,0 +1,271 @@
+// Context Menu Color Palette (from Figma)
+$bg-popup: rgba(255, 255, 255, 0.22); 
+$bg-subpopup: #3B3B3B;
+$border-color: rgba(255, 255, 255, 0.22);
+
+$text-main: #EDEAF1;
+$text-sub: rgba(237, 234, 241, 0.71);
+
+$hover-active: #3B3B3B;
+$accent-purple: #D5B5FF;
+
+$btn-save-bg: #D9D9D9;
+
+// Severity/Status colors
+$critical: #FF6F61;
+$high: #fb923c;
+$moderate: #facc15;
+$low: #60a5fa;
+$resolved: #4ade80;
+$active-status: $accent-purple;
+$error: #FF6F61;
+
+.context-menu-wrapper {
+    position: fixed;
+    z-index: 9999;
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    align-items: flex-start;
+}
+
+.context-menu {
+    min-width: 200px;
+    background: $bg-popup;
+    backdrop-filter: blur(20px);
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    padding: 8px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.15s ease-out;
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+}
+
+.menu-item-wrapper {
+    position: relative;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    color: $text-main;
+    font-size: 13px;
+    font-weight: 400;
+
+    &:hover, &.active {
+        background: $hover-active;
+    }
+
+    ng-icon {
+        font-size: 16px;
+        color: $text-main;
+    }
+
+    &.has-submenu .caret {
+        margin-left: auto;
+        font-size: 12px;
+        color: $text-sub;
+    }
+
+    &.has-dropdown .caret-down {
+        margin-left: auto;
+        font-size: 12px;
+        color: $text-sub;
+    }
+}
+
+// Dropdown popup (appears below the menu item)
+.dropdown-popup {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    margin-left: 4px;
+    min-width: 100px;
+    background: $bg-subpopup;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 6px 0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.15s ease-out;
+    z-index: 10;
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-4px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        cursor: pointer;
+        font-size: 12px;
+        color: $text-sub;
+        white-space: nowrap;
+        transition: background 0.15s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .severity-dot, .status-dot, .priority-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        // Severity colors
+        &.critical .severity-dot { background: $critical; }
+        &.high .severity-dot { background: $high; }
+        &.moderate .severity-dot { background: $moderate; }
+        &.low .severity-dot { background: $low; }
+
+        // Priority colors
+        &.high .priority-dot { background: $critical; }  // Red
+        &.medium .priority-dot { background: $moderate; } // Yellowish
+        &.low .priority-dot { background: $resolved; }    // Green
+
+        // Status colors
+        &.resolved .status-dot { background: $resolved; }
+        &.active .status-dot { background: $active-status; }
+        &.error .status-dot { background: $error; }
+    }
+}
+
+.menu-footer {
+    border-top: 1px solid $border-color;
+    padding: 10px 14px 6px;
+    margin-top: 6px;
+
+    .footer-item {
+        display: flex;
+        gap: 6px;
+        font-size: 11px;
+        margin-bottom: 4px;
+
+        .footer-label { color: $accent-purple; }
+        .footer-value { color: $text-sub; }
+    }
+}
+
+// Side Popup (Annotation, Assign, Forward)
+.side-popup {
+    width: fit-content;
+    min-width: 180px;
+    background: $bg-subpopup;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: slideInSide 0.15s ease-out;
+
+    @keyframes slideInSide {
+        from { opacity: 0; transform: translateX(-8px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .side-popup-header {
+        font-size: 12px;
+        color: $text-sub;
+        margin-bottom: 10px;
+    }
+
+    textarea {
+        width: 100%;
+        min-width: 200px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid $border-color;
+        border-radius: 8px;
+        padding: 10px;
+        color: $text-sub;
+        font-size: 13px;
+        font-family: 'Inter', sans-serif;
+        resize: none;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+
+        &::placeholder { color: $text-sub; }
+        &:focus {
+            outline: none;
+            border-color: $accent-purple;
+        }
+    }
+
+    .side-popup-field {
+        margin-bottom: 10px;
+
+        label {
+            display: block;
+            font-size: 11px;
+            color: $text-sub;
+            margin-bottom: 4px;
+        }
+
+        select, input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid $border-color;
+            border-radius: 6px;
+            padding: 8px 10px;
+            color: $text-sub;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+
+            &:focus {
+                outline: none;
+                border-color: $accent-purple;
+            }
+        }
+
+        .search-input {
+            min-width: 180px;
+        }
+    }
+
+    .side-popup-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+
+    .btn-submit {
+        padding: 6px 16px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        background: $btn-save-bg;
+        border: none;
+        color: #070508;
+        transition: all 0.15s ease;
+
+        &:hover {
+            background: darken($btn-save-bg, 10%);
+        }
+    }
+}
+
+// Forward popup options
+.forward-popup {
+    .forward-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 12px;
+        color: $text-sub;
+        border-radius: 4px;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    }
+}

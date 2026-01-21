@@ -44,93 +44,95 @@
               </div>
         </header>
         <main class="content-main">
-            <div class="filter-container">
-                <div class="filter-header">
-                    <h2 class="filter-title">Filter</h2>
-                    <p class="filter-subtitle">Show only selected severity levels</p>
-                </div>
-                
-                <div class="filter-section">
-                    <div class="filter-section-header">
-                        <h3 class="filter-section-title">Severity levels</h3>
-                        <p class="filter-section-subtitle">Select severity levels to hide/show</p>
+            <!-- Top Section: Filter + Table -->
+            <div class="top-section">
+                <div class="filter-container">
+                    <div class="filter-header">
+                        <h2 class="filter-title">Filter</h2>
+                        <p class="filter-subtitle">Show only selected severity levels</p>
                     </div>
                     
-                    <div class="filter-buttons">
-                        <button 
-                            class="filter-button" 
-                            [class.active]="selectedSeverityLevels.includes('critical')"
-                            (click)="toggleSeverityLevel('critical')">
-                            Critical
-                        </button>
-                        <button 
-                            class="filter-button" 
-                            [class.active]="selectedSeverityLevels.includes('high')"
-                            (click)="toggleSeverityLevel('high')">
-                            High
-                        </button>
-                        <button 
-                            class="filter-button" 
-                            [class.active]="selectedSeverityLevels.includes('moderate')"
-                            (click)="toggleSeverityLevel('moderate')">
-                            Moderate
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="filter-section">
-                    <h3 class="filter-section-title">Special Filters</h3>
-                    <div class="filter-buttons">
-                        <button 
-                            class="filter-button" 
-                            [class.active]="selectedSpecialFilters.includes('ongoing')"
-                            (click)="toggleSpecialFilter('ongoing')">
-                            ongoing
-                        </button>
-                        <button 
-                            class="filter-button" 
-                            [class.active]="selectedSpecialFilters.includes('long-duration')"
-                            (click)="toggleSpecialFilter('long-duration')">
-                            long-duration
-                        </button>
-                        <button 
-                            class="filter-button" 
-                            [class.active]="selectedSpecialFilters.includes('recent')"
-                            (click)="toggleSpecialFilter('recent')">
-                            recent
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="filter-section">
-                    <div class="filter-section-header">
-                        <h3 class="filter-section-title">Time Filters</h3>
-                        <p class="filter-section-subtitle">Filter anomalies by time range</p>
+                    <div class="filter-section">
+                        <div class="filter-section-header">
+                            <h3 class="filter-section-title">Severity levels</h3>
+                            <p class="filter-section-subtitle">Select severity levels to hide/show</p>
+                        </div>
+                        
+                        <div class="filter-buttons">
+                            <button 
+                                class="filter-button" 
+                                [class.active]="selectedSeverityLevels.includes('critical')"
+                                (click)="toggleSeverityLevel('critical')">
+                                Critical
+                            </button>
+                            <button 
+                                class="filter-button" 
+                                [class.active]="selectedSeverityLevels.includes('high')"
+                                (click)="toggleSeverityLevel('high')">
+                                High
+                            </button>
+                            <button 
+                                class="filter-button" 
+                                [class.active]="selectedSeverityLevels.includes('moderate')"
+                                (click)="toggleSeverityLevel('moderate')">
+                                Moderate
+                            </button>
+                        </div>
                     </div>
                     
-                    <div class="filter-buttons">
-                        <button 
-                            class="filter-button" 
-                            [class.active]="selectedTimeFilters === '1h'"
-                            (click)="toggleTimeFilter('1h')">
-                            1h
-                        </button>
-                        <button 
-                            class="filter-button" 
-                            [class.active]="selectedTimeFilters === '4h'"
-                            (click)="toggleTimeFilter('4h')">
-                            4h
-                        </button>
-                        <button 
-                            class="filter-button" 
-                            [class.active]="selectedTimeFilters === '12h'"
-                            (click)="toggleTimeFilter('12h')">
-                            12h
-                        </button>
+                    <div class="filter-section">
+                        <h3 class="filter-section-title">Special Filters</h3>
+                        <div class="filter-buttons">
+                            <button 
+                                class="filter-button" 
+                                [class.active]="selectedSpecialFilters.includes('ongoing')"
+                                (click)="toggleSpecialFilter('ongoing')">
+                                ongoing
+                            </button>
+                            <button 
+                                class="filter-button" 
+                                [class.active]="selectedSpecialFilters.includes('long-duration')"
+                                (click)="toggleSpecialFilter('long-duration')">
+                                long-duration
+                            </button>
+                            <button 
+                                class="filter-button" 
+                                [class.active]="selectedSpecialFilters.includes('recent')"
+                                (click)="toggleSpecialFilter('recent')">
+                                recent
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <div class="filter-section-header">
+                            <h3 class="filter-section-title">Time Filters</h3>
+                            <p class="filter-section-subtitle">Filter anomalies by time range</p>
+                        </div>
+                        
+                        <div class="filter-buttons">
+                            <button 
+                                class="filter-button" 
+                                [class.active]="selectedTimeFilters === '1h'"
+                                (click)="toggleTimeFilter('1h')">
+                                1h
+                            </button>
+                            <button 
+                                class="filter-button" 
+                                [class.active]="selectedTimeFilters === '4h'"
+                                (click)="toggleTimeFilter('4h')">
+                                4h
+                            </button>
+                            <button 
+                                class="filter-button" 
+                                [class.active]="selectedTimeFilters === '12h'"
+                                (click)="toggleTimeFilter('12h')">
+                                12h
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="right-container">
+
                 <div class="table-container">
                     <table class="anomalies-table">
                         <thead>
@@ -173,15 +175,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let anomaly of paginatedAnomalies">
+                            <tr *ngFor="let anomaly of paginatedAnomalies" 
+                                [class.selected]="isAnomalySelected(anomaly)"
+                                (contextmenu)="onRowRightClick($event, anomaly)">
                                 <td>
                                     <div style="display: flex; align-items: center; gap: 10px; padding-left: 16px;">
-                                        <input type="checkbox" class="anomaly-checkbox" />
-                                        <span class="clickable-text">{{ anomaly.anomaly }}</span>
+                                        <input type="checkbox" 
+                                               class="anomaly-checkbox" 
+                                               [checked]="isAnomalySelected(anomaly)"
+                                               (change)="toggleAnomalySelection(anomaly)"
+                                               (click)="$event.stopPropagation()" />
+                                        <span class="clickable-text" (click)="navigateToAnomalyDetail(anomaly)" style="cursor: pointer;">{{ anomaly.anomaly }}</span>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="clickable-text" (click)="navigateToEntity(anomaly)">{{ anomaly.entity }}</span>
+                                    <span class="clickable-text" (click)="navigateToEntityInsights(anomaly)" style="cursor: pointer;">{{ anomaly.entity }}</span>
                                 </td>
                                 <td>{{ anomaly.status }}</td>
                                 <td>
@@ -237,232 +245,243 @@
                         </button>
                     </div>
                 </div>
-                <div class="anomalous-dimensions-container">
-                    <div class="anomalous-dimensions-header">
-                        <div class="header-content">
-                            <h3 class="anomalous-dimensions-title">Percentage of anomalous dimensions by type + anomaly_detection.type_anomaly_rate + [percentage]</h3>
-                            <div class="header-actions-top">
-                                <button class="icon-btn"><ng-icon name="phosphorInfo"></ng-icon></button>
-                                <button class="icon-btn"><ng-icon name="phosphorPulse"></ng-icon></button>
-                                <button class="icon-btn"><ng-icon name="phosphorCornersOut"></ng-icon></button>
-                                <button class="icon-btn"><ng-icon name="phosphorCloudArrowDown"></ng-icon></button>
-                            </div>
+            </div>
+
+            <!-- Bottom Section: Full Width Charts -->
+            <div class="anomalous-dimensions-container">
+                <div class="anomalous-dimensions-header">
+                    <div class="header-content">
+                        <h3 class="anomalous-dimensions-title">Percentage of anomalous dimensions by type + anomaly_detection.type_anomaly_rate + [percentage]</h3>
+                        <div class="header-actions-top">
+                            <button class="icon-btn"><ng-icon name="phosphorInfo"></ng-icon></button>
+                            <button class="icon-btn"><ng-icon name="phosphorPulse"></ng-icon></button>
+                            <button class="icon-btn"><ng-icon name="phosphorCornersOut"></ng-icon></button>
+                            <button class="icon-btn"><ng-icon name="phosphorCloudArrowDown"></ng-icon></button>
                         </div>
                     </div>
-                    <div class="anomalous-dimensions-controls">
-                        <div class="left-controls">
-                            <div class="control-item">
-                                <span>Group by Dimension</span>
-                                <ng-icon name="phosphorCaretDown"></ng-icon>
-                            </div>
-                            
-                            <div class="control-item">
-                                <span>the SUM</span>
-                                <ng-icon name="phosphorCaretDown"></ng-icon>
-                            </div>
-
-                            <div class="control-item">
-                                <span>1 node</span>
-                                <ng-icon name="phosphorCaretDown"></ng-icon>
-                            </div>
-
-                            <div class="control-item">
-                                <span>1 instance</span>
-                                <ng-icon name="phosphorCaretDown"></ng-icon>
-                            </div>
-
-                            <div class="control-item">
-                                <span>47 dimensions</span>
-                                <ng-icon name="phosphorCaretDown"></ng-icon>
-                            </div>
-
-                            <div class="control-text">2 labels</div>
-                            <div class="control-text muted">each as AVG every 3s</div>
-
-                            <button class="reset-pill">Reset</button>
+                </div>
+                <div class="anomalous-dimensions-controls">
+                    <div class="left-controls">
+                        <div class="control-item">
+                            <span>Group by Dimension</span>
+                            <ng-icon name="phosphorCaretDown"></ng-icon>
                         </div>
                         
-                        <div class="right-chart-tools">
-                             <button class="tool-btn"><ng-icon name="phosphorHandPalm"></ng-icon></button>
-                             <button class="tool-btn"><ng-icon name="phosphorCrop"></ng-icon></button>
-                             <button class="tool-btn"><ng-icon name="phosphorArrowsLeftRight"></ng-icon></button>
-                             <button class="tool-btn"><ng-icon name="phosphorMagnifyingGlassPlus"></ng-icon></button>
-                             <button class="tool-btn"><ng-icon name="phosphorMagnifyingGlassMinus"></ng-icon></button>
-                             <button class="tool-btn"><ng-icon name="phosphorArrowCounterClockwise"></ng-icon></button>
+                        <div class="control-item">
+                            <span>the SUM</span>
+                            <ng-icon name="phosphorCaretDown"></ng-icon>
                         </div>
+
+                        <div class="control-item">
+                            <span>1 node</span>
+                            <ng-icon name="phosphorCaretDown"></ng-icon>
+                        </div>
+
+                        <div class="control-item">
+                            <span>1 instance</span>
+                            <ng-icon name="phosphorCaretDown"></ng-icon>
+                        </div>
+
+                        <div class="control-item">
+                            <span>47 dimensions</span>
+                            <ng-icon name="phosphorCaretDown"></ng-icon>
+                        </div>
+
+                        <div class="control-text">2 labels</div>
+                        <div class="control-text muted">each as AVG every 3s</div>
+
+                        <button class="reset-pill">Reset</button>
                     </div>
-                    <div class="anomalous-dimensions-content custom-chart-wrapper">
-                         <!-- Y Axis Labels -->
-                         <div class="y-axis-labels">
-                            <span>100.00</span><span>90.00</span><span>80.00</span><span>70.00</span><span>60.00</span>
-                            <span>50.00</span><span>40.00</span><span>30.00</span><span>20.00</span><span>10.00</span><span>0.00</span>
-                         </div>
-                         
-                         <!-- Chart Grid/Bubbles -->
-                         <div class="chart-plot-area">
-                            <div class="grid-lines">
-                                <div class="grid-line horizontal" style="top: 0%"></div>
-                                <div class="grid-line horizontal" style="top: 10%"></div>
-                                <div class="grid-line horizontal" style="top: 20%"></div>
-                                <div class="grid-line horizontal" style="top: 30%"></div>
-                                <div class="grid-line horizontal" style="top: 40%"></div>
-                                <div class="grid-line horizontal" style="top: 50%"></div>
-                                <div class="grid-line horizontal" style="top: 60%"></div>
-                                <div class="grid-line horizontal" style="top: 70%"></div>
-                                <div class="grid-line horizontal" style="top: 80%"></div>
-                                <div class="grid-line horizontal" style="top: 90%"></div>
-                                <div class="grid-line horizontal" style="top: 100%"></div>
-                                
-                                <div class="grid-line vertical" style="left: 0%"></div>
-                                <div class="grid-line vertical" style="left: 10%"></div>
-                                <div class="grid-line vertical" style="left: 20%"></div>
-                                <div class="grid-line vertical" style="left: 30%"></div>
-                                <div class="grid-line vertical" style="left: 40%"></div>
-                                <div class="grid-line vertical" style="left: 50%"></div>
-                                <div class="grid-line vertical" style="left: 60%"></div>
-                                <div class="grid-line vertical" style="left: 70%"></div>
-                                <div class="grid-line vertical" style="left: 80%"></div>
-                                <div class="grid-line vertical" style="left: 90%"></div>
-                                <div class="grid-line vertical" style="left: 100%"></div>
-                            </div>
+                    
+                    <div class="right-chart-tools">
+                         <button class="tool-btn"><ng-icon name="phosphorHandPalm"></ng-icon></button>
+                         <button class="tool-btn"><ng-icon name="phosphorCrop"></ng-icon></button>
+                         <button class="tool-btn"><ng-icon name="phosphorArrowsLeftRight"></ng-icon></button>
+                         <button class="tool-btn"><ng-icon name="phosphorMagnifyingGlassPlus"></ng-icon></button>
+                         <button class="tool-btn"><ng-icon name="phosphorMagnifyingGlassMinus"></ng-icon></button>
+                         <button class="tool-btn"><ng-icon name="phosphorArrowCounterClockwise"></ng-icon></button>
+                    </div>
+                </div>
+                <div class="anomalous-dimensions-content custom-chart-wrapper">
+                     <!-- Y Axis Labels -->
+                     <div class="y-axis-labels">
+                        <span>100.00</span><span>90.00</span><span>80.00</span><span>70.00</span><span>60.00</span>
+                        <span>50.00</span><span>40.00</span><span>30.00</span><span>20.00</span><span>10.00</span><span>0.00</span>
+                     </div>
+                     
+                     <!-- Chart Grid/Bubbles -->
+                     <div class="chart-plot-area">
+                        <div class="grid-lines">
+                            <div class="grid-line horizontal" style="top: 0%"></div>
+                            <div class="grid-line horizontal" style="top: 10%"></div>
+                            <div class="grid-line horizontal" style="top: 20%"></div>
+                            <div class="grid-line horizontal" style="top: 30%"></div>
+                            <div class="grid-line horizontal" style="top: 40%"></div>
+                            <div class="grid-line horizontal" style="top: 50%"></div>
+                            <div class="grid-line horizontal" style="top: 60%"></div>
+                            <div class="grid-line horizontal" style="top: 70%"></div>
+                            <div class="grid-line horizontal" style="top: 80%"></div>
+                            <div class="grid-line horizontal" style="top: 90%"></div>
+                            <div class="grid-line horizontal" style="top: 100%"></div>
                             
-                            <!-- Spiky Trend Lines (SVG) -->
-                            <svg class="trend-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                <!-- Baseline -->
-                                <line x1="0" y1="99" x2="100" y2="99" stroke="#9C7FCF" stroke-width="1.5" vector-effect="non-scaling-stroke" />
+                            <div class="grid-line vertical" style="left: 0%"></div>
+                            <div class="grid-line vertical" style="left: 10%"></div>
+                            <div class="grid-line vertical" style="left: 20%"></div>
+                            <div class="grid-line vertical" style="left: 30%"></div>
+                            <div class="grid-line vertical" style="left: 40%"></div>
+                            <div class="grid-line vertical" style="left: 50%"></div>
+                            <div class="grid-line vertical" style="left: 60%"></div>
+                            <div class="grid-line vertical" style="left: 70%"></div>
+                            <div class="grid-line vertical" style="left: 80%"></div>
+                            <div class="grid-line vertical" style="left: 90%"></div>
+                            <div class="grid-line vertical" style="left: 100%"></div>
+                        </div>
+                        
+                        <!-- Spiky Trend Lines (SVG) -->
+                        <svg class="trend-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <!-- Baseline -->
+                            <line x1="0" y1="99" x2="100" y2="99" stroke="#9C7FCF" stroke-width="1.5" vector-effect="non-scaling-stroke" />
 
-                                <!-- Purple Spike (High) - More complex -->
-                                <path d="M 25 99 L 26 80 L 27 60 L 28 40 L 29 20 L 30 30 L 31 50 L 32 80 L 35 99" fill="none" stroke="#9C7FCF" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
-                                <path d="M 26 99 L 27 85 L 28 70 L 29 50 L 30 45 L 31 60 L 32 85 L 34 99" fill="none" stroke="#7B4872" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
+                            <!-- Purple Spike (High) - More complex -->
+                            <path d="M 25 99 L 26 80 L 27 60 L 28 40 L 29 20 L 30 30 L 31 50 L 32 80 L 35 99" fill="none" stroke="#9C7FCF" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
+                            <path d="M 26 99 L 27 85 L 28 70 L 29 50 L 30 45 L 31 60 L 32 85 L 34 99" fill="none" stroke="#7B4872" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
 
-                                <!-- Blue Spike -->
-                                <path d="M 36 99 L 37 90 L 38 75 L 39 60 L 40 55 L 41 60 L 42 75 L 43 90 L 46 99" fill="none" stroke="#3A6082" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
+                            <!-- Blue Spike -->
+                            <path d="M 36 99 L 37 90 L 38 75 L 39 60 L 40 55 L 41 60 L 42 75 L 43 90 L 46 99" fill="none" stroke="#3A6082" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
 
-                                <!-- Small Green bump -->
-                                <path d="M 60 99 L 61 97 L 62 90 L 63 92 L 64 97 L 66 99" fill="none" stroke="#AFCB52" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
+                            <!-- Small Green bump -->
+                            <path d="M 60 99 L 61 97 L 62 90 L 63 92 L 64 97 L 66 99" fill="none" stroke="#AFCB52" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
 
-                                <!-- Multi-spike group (Green/Orange/Pink) -->
-                                <!-- Green -->
-                                <path d="M 72 99 L 73 90 L 74 80 L 75 70 L 76 75 L 77 85 L 80 99" fill="none" stroke="#AFCB52" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
-                                <!-- Orange -->
-                                <path d="M 76 99 L 77 90 L 78 75 L 79 60 L 80 55 L 81 65 L 82 85 L 84 99" fill="none" stroke="#FF6F61" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
-                                <!-- Pink/Purple -->
-                                <path d="M 71 99 L 72 95 L 73 90 L 73.5 85 L 74 90 L 75 95 L 77 99" fill="none" stroke="#BF49AF" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
+                            <!-- Multi-spike group (Green/Orange/Pink) -->
+                            <!-- Green -->
+                            <path d="M 72 99 L 73 90 L 74 80 L 75 70 L 76 75 L 77 85 L 80 99" fill="none" stroke="#AFCB52" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
+                            <!-- Orange -->
+                            <path d="M 76 99 L 77 90 L 78 75 L 79 60 L 80 55 L 81 65 L 82 85 L 84 99" fill="none" stroke="#FF6F61" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
+                            <!-- Pink/Purple -->
+                            <path d="M 71 99 L 72 95 L 73 90 L 73.5 85 L 74 90 L 75 95 L 77 99" fill="none" stroke="#BF49AF" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
 
-                                <!-- Final Pink Spike -->
-                                <path d="M 86 99 L 87 90 L 88 75 L 89 65 L 90 70 L 91 80 L 94 99" fill="none" stroke="#CA92B7" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
-                                <path d="M 87 99 L 88 95 L 89 80 L 90 75 L 91 85 L 93 99" fill="none" stroke="#3A6082" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
-                            </svg>
+                            <!-- Final Pink Spike -->
+                            <path d="M 86 99 L 87 90 L 88 75 L 89 65 L 90 70 L 91 80 L 94 99" fill="none" stroke="#CA92B7" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
+                            <path d="M 87 99 L 88 95 L 89 80 L 90 75 L 91 85 L 93 99" fill="none" stroke="#3A6082" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" />
+                        </svg>
 
-                            <!-- Vertical Time Marker -->
-                            <div class="time-marker-line" style="left: 92%;"></div>
-                            <div class="time-marker-line dashed" style="left: 95%;"></div>
-                         </div>
-                         
-                         <!-- X Axis Labels -->
-                         <div class="x-axis-labels">
-                            <span style="left: 0%">17.13.00</span>
-                            <span style="left: 10%">17.14.00</span>
-                            <span style="left: 20%">17.15.00</span>
-                            <span style="left: 30%">17.16.00</span>
-                            <span style="left: 40%">17.17.00</span>
-                            <span style="left: 50%">17.18.00</span>
-                            <span style="left: 60%">17.19.00</span>
-                            <span style="left: 70%">17.20.00</span>
-                            <span style="left: 80%">17.21.00</span>
-                            <span style="left: 90%">17.22.00</span>
-                            <span style="left: 100%">17.23.00</span>
-                         </div>
-                         
-                         <!-- Legend / Dimension Cards -->
-                         <div class="dimension-legend">
-                            <div class="d-card">
-                                <div class="bar bar-purple"></div>
-                                <div class="card-content">
-                                    <div class="label">net_packets</div>
-                                    <div class="value">00.00</div>
-                                </div>
+                        <!-- Vertical Time Marker -->
+                        <div class="time-marker-line" style="left: 92%;"></div>
+                        <div class="time-marker-line dashed" style="left: 95%;"></div>
+                     </div>
+                     
+                     <!-- X Axis Labels -->
+                     <div class="x-axis-labels">
+                        <span style="left: 0%">17.13.00</span>
+                        <span style="left: 10%">17.14.00</span>
+                        <span style="left: 20%">17.15.00</span>
+                        <span style="left: 30%">17.16.00</span>
+                        <span style="left: 40%">17.17.00</span>
+                        <span style="left: 50%">17.18.00</span>
+                        <span style="left: 60%">17.19.00</span>
+                        <span style="left: 70%">17.20.00</span>
+                        <span style="left: 80%">17.21.00</span>
+                        <span style="left: 90%">17.22.00</span>
+                        <span style="left: 100%">17.23.00</span>
+                     </div>
+                     
+                     <!-- Legend / Dimension Cards -->
+                     <div class="dimension-legend">
+                        <div class="d-card">
+                            <div class="bar bar-purple"></div>
+                            <div class="card-content">
+                                <div class="label">net_packets</div>
+                                <div class="value">00.00</div>
                             </div>
-                             <div class="d-card">
-                                <div class="bar bar-light-purple"></div>
-                                <div class="card-content">
-                                    <div class="label">ip</div>
-                                    <div class="value">00.00</div>
-                                </div>
+                        </div>
+                         <div class="d-card">
+                            <div class="bar bar-light-purple"></div>
+                            <div class="card-content">
+                                <div class="label">ip</div>
+                                <div class="value">00.00</div>
                             </div>
-                             <div class="d-card">
-                                <div class="bar bar-green"></div>
-                                <div class="card-content">
-                                    <div class="label">disk_spaces</div>
-                                    <div class="value">00.00</div>
-                                </div>
+                        </div>
+                         <div class="d-card">
+                            <div class="bar bar-green"></div>
+                            <div class="card-content">
+                                <div class="label">disk_spaces</div>
+                                <div class="value">00.00</div>
                             </div>
-                             <div class="d-card">
-                                <div class="bar bar-orange"></div>
-                                <div class="card-content">
-                                    <div class="label">net</div>
-                                    <div class="value">00.00</div>
-                                </div>
+                        </div>
+                         <div class="d-card">
+                            <div class="bar bar-orange"></div>
+                            <div class="card-content">
+                                <div class="label">net</div>
+                                <div class="value">00.00</div>
                             </div>
-                             <div class="d-card">
-                                <div class="bar bar-blue"></div>
-                                <div class="card-content">
-                                    <div class="label">ipv4</div>
-                                    <div class="value">00.00</div>
-                                </div>
+                        </div>
+                         <div class="d-card">
+                            <div class="bar bar-blue"></div>
+                            <div class="card-content">
+                                <div class="label">ipv4</div>
+                                <div class="value">00.00</div>
                             </div>
-                             <div class="d-card">
-                                <div class="bar bar-dark-green"></div>
-                                <div class="card-content">
-                                    <div class="label">mem</div>
-                                    <div class="value">3.40</div>
-                                </div>
+                        </div>
+                         <div class="d-card">
+                            <div class="bar bar-dark-green"></div>
+                            <div class="card-content">
+                                <div class="label">mem</div>
+                                <div class="value">3.40</div>
                             </div>
-                             <div class="d-card">
-                                <div class="bar bar-magenta"></div>
-                                <div class="card-content">
-                                    <div class="label">system</div>
-                                    <div class="value">1.27</div>
-                                </div>
+                        </div>
+                         <div class="d-card">
+                            <div class="bar bar-magenta"></div>
+                            <div class="card-content">
+                                <div class="label">system</div>
+                                <div class="value">1.27</div>
                             </div>
-                             <div class="d-card">
-                                <div class="bar bar-dark-gray"></div>
-                                <div class="card-content">
-                                    <div class="label">disk_inodes</div>
-                                    <div class="value">00.00</div>
-                                </div>
+                        </div>
+                         <div class="d-card">
+                            <div class="bar bar-dark-gray"></div>
+                            <div class="card-content">
+                                <div class="label">disk_inodes</div>
+                                <div class="value">00.00</div>
                             </div>
-                             <div class="d-card">
-                                <div class="bar bar-pink"></div>
-                                <div class="card-content">
-                                    <div class="label">disk_busy</div>
-                                    <div class="value">22.22</div>
-                                </div>
+                        </div>
+                         <div class="d-card">
+                            <div class="bar bar-pink"></div>
+                            <div class="card-content">
+                                <div class="label">disk_busy</div>
+                                <div class="value">22.22</div>
                             </div>
-                             <div class="d-card">
-                                <div class="bar bar-indigo"></div>
-                                <div class="card-content">
-                                    <div class="label">disk_iotime</div>
-                                    <div class="value">25.00</div>
-                                </div>
+                        </div>
+                         <div class="d-card">
+                            <div class="bar bar-indigo"></div>
+                            <div class="card-content">
+                                <div class="label">disk_iotime</div>
+                                <div class="value">25.00</div>
                             </div>
-                             <div class="d-card">
-                                <div class="bar bar-gray"></div>
-                                <div class="card-content">
-                                    <div class="label">disk_ops</div>
-                                    <div class="value">33.33</div>
-                                </div>
+                        </div>
+                         <div class="d-card">
+                            <div class="bar bar-gray"></div>
+                            <div class="card-content">
+                                <div class="label">disk_ops</div>
+                                <div class="value">33.33</div>
                             </div>
-                         </div>
-                    </div>
+                        </div>
+                     </div>
                 </div>
-                <div class="service-tree-container">
-                    <div class="service-tree-header">
-                        <h3 class="service-tree-title">Business Service Model Tree</h3>
-                    </div>
-                    <div class="service-tree-content" #serviceModelChart></div>
+            </div>
+            <div class="service-tree-container">
+                <div class="service-tree-header">
+                    <h3 class="service-tree-title">Business Service Model Tree</h3>
                 </div>
+                <div class="service-tree-content" #serviceModelChart></div>
             </div>
         </main>
     </div>
 </div>
+
+<!-- Context Menu -->
+<app-anomaly-context-menu
+    [visible]="contextMenuVisible"
+    [position]="contextMenuPosition"
+    [selectedAnomalies]="selectedAnomalies"
+    (action)="onContextMenuAction($event)"
+    (close)="closeContextMenu()">
+</app-anomaly-context-menu>

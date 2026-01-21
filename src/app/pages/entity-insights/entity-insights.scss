@@ -576,9 +576,17 @@
     }
 }
 
-/* Forward Button */
-.forward-button {
+/* Forward Action Container */
+.forward-action-container {
     align-self: flex-end; /* Align to the right in the flex column */
+    margin-top: 8px; /* Add some spacing from the content above */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.forward-button {
     background: #EDEAF1;
     color: #040517;
     border: none;
@@ -591,16 +599,192 @@
     gap: 8px;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    margin-top: 8px; /* Add some spacing from the content above */
+    transition: all 0.2s ease;
     
-    i {
-        color: #040517;
+    ng-icon {
         font-size: 18px;
+        color: #040517;
     }
     
     &:hover {
         transform: translateY(-2px);
+        background: #FFFFFF;
     }
+
+    &.active {
+        background: #D5B5FF;
+        color: #040517;
+    }
+}
+
+/* Old Popup (Removed) */
+/* .forward-popup { display: none !important; } */
+
+/* New PrimeNG Dialog Styling (Glassmorphism) */
+/* New PrimeNG Dialog Styling (Glassmorphism) */
+:host ::ng-deep .p-dialog.forward-dialog.agent-theme {
+    background: rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.55) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+    .p-dialog-header {
+        background: transparent !important;
+        padding: 24px 24px 12px 24px;
+        border-bottom: none !important;
+        
+        .p-dialog-title {
+            color: #EDEAF1;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .p-dialog-header-icons {
+            display: none; /* Hide close icon if not needed, or style it */
+        }
+    }
+    
+    .p-dialog-content {
+        background: transparent !important;
+        padding: 0 24px 24px 24px;
+        border-radius: 0 0 16px 16px;
+    }
+    
+    .p-dialog-footer {
+        background: transparent !important;
+        padding: 0 24px 24px 24px;
+        border-top: none !important;
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+.dialog-content-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.field-item {
+    width: 100%;
+    
+    &.full-width {
+        width: 100%;
+    }
+    
+    &.relative-input {
+        position: relative;
+    }
+}
+
+.agent-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.55) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 12px 16px;
+    color: #FFF !important;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    
+    &::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(213, 181, 255, 0.3);
+    }
+    
+    &[readonly] {
+        cursor: default;
+    }
+}
+
+/* Status Dot */
+.status-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    
+    &.critical { background-color: #FF6B6B; box-shadow: 0 0 8px rgba(255, 107, 107, 0.4); }
+    &.high { background-color: #FFD166; box-shadow: 0 0 8px rgba(255, 209, 102, 0.4); }
+    &.moderate { background-color: #C8E972; box-shadow: 0 0 8px rgba(200, 233, 114, 0.4); }
+    &.idle { background-color: #EBEBF5; }
+}
+
+.severity-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+/* Custom Select Styling */
+:host ::ng-deep .agent-select.p-select {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.55) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 2px 8px; /* Adjustment for PrimeNG select padding structure */
+    
+    .p-select-label {
+        color: #FFF;
+        font-size: 14px;
+        padding: 10px 8px;
+    }
+    
+    .p-select-dropdown {
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    &:not(.p-disabled).p-focus {
+        box-shadow: 0 0 0 2px rgba(213, 181, 255, 0.3);
+    }
+    
+    .p-select-overlay {
+        background: #2B2A40;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        
+        .p-select-item {
+            color: #EDEAF1;
+            
+            &:hover, &.p-highlight {
+                background: rgba(255, 255, 255, 0.1);
+                color: #FFF;
+            }
+        }
+    }
+}
+
+.agent-btn {
+    border: none;
+    border-radius: 20px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &.primary {
+        background: #EDEAF1;
+        color: #040517;
+        
+        &:hover {
+            background: #FFFFFF;
+            transform: translateY(-1px);
+        }
+    }
+}
+
+@keyframes popupFadeIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 /* Responsive */
@@ -620,3 +804,5 @@
         flex-direction: column;
     }
 }
+
+

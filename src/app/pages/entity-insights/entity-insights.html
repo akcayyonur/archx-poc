@@ -191,8 +191,9 @@
                                         <div class="rec-name">{{ item.name }}</div>
                                         <div class="rec-trend">
                                             Trend: 
-                                            <i [class]="item.trend === 'up' ? 'ph-trend-up' : 'ph-trend-down'" 
-                                               [style.color]="item.trend === 'up' ? '#FF6B6B' : '#C8E972'"></i>
+                                            <ng-icon [name]="item.trend === 'up' ? 'phosphorTrendUp' : 'phosphorTrendDown'" 
+                                               [style.color]="item.trend === 'up' ? '#FF6B6B' : '#C8E972'"
+                                               size="20"></ng-icon>
                                         </div>
                                         <div class="rec-count">Occured <span class="highlight">{{ item.count }} times</span> {{ item.timeframe }}</div>
                                     </div>
@@ -202,11 +203,99 @@
                     </div>
                 </div>
 
-                <button class="forward-button">
-                    <i class="ph-share-fat"></i>
-                    Forward Anomaly
-                </button>
+                <div class="forward-action-container">
+                    <button class="forward-button" (click)="openForwardDialog()">
+                        <ng-icon name="phosphorShareFat" size="20"></ng-icon>
+                        Forward Anomaly
+                    </button>
+                    
+                    <div class="forward-popup" *ngIf="showForwardPopup">
+                        <div class="forward-item" *ngFor="let option of forwardOptions" 
+                             (click)="toggleForwardOption(option)"
+                             [class.selected]="selectedForwardOptions.includes(option)">
+                            <div class="custom-checkbox" [class.checked]="selectedForwardOptions.includes(option)">
+                                <ng-icon name="phosphorCheck" *ngIf="selectedForwardOptions.includes(option)"></ng-icon>
+                            </div>
+                            <!-- Option Icon Logic -->
+                            <ng-icon name="phosphorEnvelope" *ngIf="option === 'Email'" class="option-icon"></ng-icon>
+                            <span class="option-text">{{ option }}</span>
+                        </div>
+                        <div class="forward-actions">
+                            <button class="btn-submit" (click)="confirmForward()">Save</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 </div>
+
+<p-dialog 
+    header="Forward Anomaly" 
+    [(visible)]="forwardDialogVisible" 
+    [modal]="true" 
+    [style]="{ width: '500px' }" 
+    [draggable]="false" 
+    [resizable]="false" 
+    styleClass="forward-dialog agent-theme">
+    
+    <div class="dialog-content-grid">
+        <!-- Anomaly Title -->
+        <div class="field-item full-width">
+            <input pInputText type="text" [(ngModel)]="dialogData.title" class="agent-input" placeholder="Anomaly Title" />
+        </div>
+
+        <!-- Severity -->
+        <div class="field-item full-width">
+             <p-select 
+                [options]="severityOptions" 
+                [(ngModel)]="dialogData.severity" 
+                placeholder="Select Severity"
+                [style]="{'width':'100%'}"
+                appendTo="body"
+                styleClass="agent-select">
+                <ng-template pTemplate="selectedItem" let-selectedOption>
+                    <div class="severity-row" *ngIf="selectedOption">
+                        <span class="status-dot" [ngClass]="selectedOption.toLowerCase()"></span>
+                        <span>{{ selectedOption }}</span>
+                    </div>
+                </ng-template>
+                <ng-template let-option pTemplate="item">
+                    <div class="severity-row">
+                        <span class="status-dot" [ngClass]="option.toLowerCase()"></span>
+                        <span>{{ option }}</span>
+                    </div>
+                </ng-template>
+            </p-select>
+        </div>
+
+        <!-- Assigned Team -->
+        <div class="field-item full-width">
+             <p-select 
+                [options]="availableTeams" 
+                [(ngModel)]="dialogData.assignedTeam" 
+                placeholder="Select Team"
+                [style]="{'width':'100%'}"
+                appendTo="body"
+                styleClass="agent-select">
+            </p-select>
+        </div>
+
+        <!-- Status -->
+        <div class="field-item full-width">
+            <input pInputText type="text" [(ngModel)]="dialogData.status" readonly class="agent-input" placeholder="Status" />
+        </div>
+
+        <!-- Application -->
+        <div class="field-item full-width">
+            <input pInputText type="text" [(ngModel)]="dialogData.application" readonly class="agent-input" placeholder="Application" />
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <div class="dialog-footer-actions">
+            <!-- Only Forward button as per design, but keeping structure flexible -->
+            <button class="agent-btn primary" (click)="submitForward()">Forward</button>
+        </div>
+    </ng-template>
+</p-dialog>
