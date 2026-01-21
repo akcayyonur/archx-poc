@@ -1,0 +1,233 @@
+<div class="page-container">
+  <div class="frame-container">
+    <div class="shape-container">
+      <div class="content-container">
+        <div class="top-container">
+          <div class="top-left-container">
+            <img src="/images/archx_logo.png" alt="Ball" class="archx-logo">
+            <div class="button-container">
+              <input type="button" [value]="t('landing.signUp')" class="sign-up-button" (click)="navigateToSignUp()">
+              <div class="gradient-border">
+                <input type="button" [value]="t('landing.signIn')" class="sign-in-button" (click)="navigateToSignIn()">
+              </div>
+            </div>
+          </div>
+          <nav class="navigation">
+            <a href="#" class="nav-button">{{ t('landing.agents') }}</a>
+            <a href="#" class="nav-button">{{ t('landing.portfolio') }}</a>
+            <a href="#" class="nav-button">{{ t('landing.contactUs') }}</a>
+          </nav>
+        </div>
+
+        <div class="middle-container">
+          <div class="title-container">
+            <h2 class="title">ArchX</h2>
+            <h5 class="subtitle">{{ t('landing.subtitle') }}</h5>
+            <div class="bottom-title-container clickable-title" (click)="navigateToSignIn()">
+              <h3 class="bottom-title">
+                {{ t('landing.shapeYourDigitalFuture') }}
+              </h3>
+              <mat-icon class="bottom-icon">chevron_right</mat-icon>
+            </div>
+
+          </div>
+          <div class="ball-container">
+            <img src="/images/ball.png" alt="Ball" class="ball-image">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="reference-container">
+      <h2 class="reference-title">Our Data Sources</h2>
+      <div class="slider-track">
+        <!-- First Set -->
+        <img src="/images/zabbix.png" alt="Zabbix" class="reference-image" style="width: 102px">
+        <img src="/images/opentext.png" alt="OpenText" class="reference-image">
+        <img src="/images/dynatrace.png" alt="Dynatrace" class="reference-image" style="margin-bottom: 6px;">
+        <img src="/images/appdynamics.png" alt="AppDynamics" class="reference-image" style="width: 222px">
+        <img src="/images/oracle.png" alt="Oracle" class="reference-image" style="width: 156px">
+        <img src="/images/mysql.png" alt="MySQL" class="reference-image">
+        <img src="/images/mssql.png" alt="MSSQL" class="reference-image">
+        <img src="/images/mongodb.png" alt="MongoDB" class="reference-image">
+        <img src="/images/vertica.png" alt="Vertica" class="reference-image">
+        <img src="/images/postgres.png" alt="PostgreSQL" class="reference-image">
+        <img src="/images/cassandra.png" alt="Cassandra" class="reference-image">
+        <img src="/images/hadoop.png" alt="Hadoop" class="reference-image">
+        <img src="/images/grafana_labs.png" alt="Grafana Labs" class="reference-image">
+
+        <!-- Second Set (Duplicate for infinite scroll) -->
+        <img src="/images/zabbix.png" alt="Zabbix" class="reference-image" style="width: 102px">
+        <img src="/images/opentext.png" alt="OpenText" class="reference-image">
+        <img src="/images/dynatrace.png" alt="Dynatrace" class="reference-image" style="margin-bottom: 6px;">
+        <img src="/images/appdynamics.png" alt="AppDynamics" class="reference-image" style="width: 222px">
+        <img src="/images/oracle.png" alt="Oracle" class="reference-image" style="width: 156px">
+        <img src="/images/mysql.png" alt="MySQL" class="reference-image">
+        <img src="/images/mssql.png" alt="MSSQL" class="reference-image">
+        <img src="/images/mongodb.png" alt="MongoDB" class="reference-image">
+        <img src="/images/vertica.png" alt="Vertica" class="reference-image">
+        <img src="/images/postgres.png" alt="PostgreSQL" class="reference-image">
+        <img src="/images/cassandra.png" alt="Cassandra" class="reference-image">
+        <img src="/images/hadoop.png" alt="Hadoop" class="reference-image">
+        <img src="/images/grafana_labs.png" alt="Grafana Labs" class="reference-image">
+
+        <!-- Third Set (Duplicate for infinite scroll) -->
+        <img src="/images/zabbix.png" alt="Zabbix" class="reference-image" style="width: 102px">
+        <img src="/images/opentext.png" alt="OpenText" class="reference-image">
+        <img src="/images/dynatrace.png" alt="Dynatrace" class="reference-image" style="margin-bottom: 6px;">
+        <img src="/images/appdynamics.png" alt="AppDynamics" class="reference-image" style="width: 222px">
+        <img src="/images/oracle.png" alt="Oracle" class="reference-image" style="width: 156px">
+        <img src="/images/mysql.png" alt="MySQL" class="reference-image">
+        <img src="/images/mssql.png" alt="MSSQL" class="reference-image">
+        <img src="/images/mongodb.png" alt="MongoDB" class="reference-image">
+        <img src="/images/vertica.png" alt="Vertica" class="reference-image">
+        <img src="/images/postgres.png" alt="PostgreSQL" class="reference-image">
+        <img src="/images/cassandra.png" alt="Cassandra" class="reference-image">
+        <img src="/images/hadoop.png" alt="Hadoop" class="reference-image">
+        <img src="/images/grafana_labs.png" alt="Grafana Labs" class="reference-image">
+      </div>
+    </div>
+    <div class="tool-container">
+      <div class="tool-title-container">
+        <h2 class="tool-title">{{ t('landing.ourSolutions') }}</h2>
+        <h2 class="tool-title">{{ t('landing.tailoredForEverySector') }}</h2>
+      </div>
+      <div class="card-list">
+        <div class="feature-card" *ngFor="let card of featureCards()">
+          <div class="feature-card-title-container">
+            <ng-icon [name]="card.icon" class="feature-card-icon" *ngIf="card.icon"></ng-icon>
+            <h4 class="feature-card-title">{{ card.title }}</h4>
+          </div>
+          <p class="feature-card-description">{{ card.description }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="donut-container">
+      <div class="top-half-container">
+        <img src="/images/ss2.png" alt="Donut" class="donut-image">
+        <div class="donut-title-container">
+          <h5 class="donut-title">{{ t('landing.manageDigitalTransformation') }}</h5>
+          <div class="donut-subtitle-container">
+            <h2 class="donut-subtitle">{{ t('landing.meetArch') }}</h2>
+            <img src="/images/archx_x.png" alt="ArchX X" class="donut-subtitle-x-image">
+          </div>
+        </div>
+      </div>
+      <div class="bottom-half-container">
+        <img src="/images/ss1.png" alt="Donut" class="donut-image" style="width: 545px; height: 392px;">
+        <div class="donut-description-container">
+          <p class="donut-description">
+            {{ t('landing.description') }}
+          </p>
+          <div class="donut-button-container">
+            <div class="gradient-border" id="donut-button" style="width: 194px; height: 48px;">
+              <input type="button" [value]="t('landing.learnMore')" class="donut-button">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="update-container">
+      <div class="update-left-panel">
+        <div class="update-text-content">
+          <h2 class="update-main-title">{{ t('landing.weAre') }}</h2>
+          <h2 class="update-main-title">{{ t('landing.archx') }}</h2>
+          <p class="update-description">{{ t('landing.shapingFuture') }} <span class="gradient-text">{{ t('landing.future') }}</span> {{ t('landing.withVision') }}</p>
+        </div>
+        <div class="update-buttons">
+          <button class="update-button-item"
+            [class.active]="activeIndex() === 0" (click)="selectUpdate(0)">
+            {{ t('landing.mission') }}
+          </button>
+          <button class="update-button-item"
+            [class.active]="activeIndex() === 1" (click)="selectUpdate(1)">
+            {{ t('landing.vision') }}
+          </button>
+          <button class="update-button-item"
+            [class.active]="activeIndex() === 2" (click)="selectUpdate(2)">
+            {{ t('landing.values') }}
+          </button>
+          <button class="update-button-item"
+            [class.active]="activeIndex() === 3" (click)="selectUpdate(3)">
+            {{ t('landing.approach') }}
+          </button>
+        </div>
+      </div>
+      <div class="update-right-panel">
+        <h3 class="update-feature-title" [class.lang-tr]="selectedLanguage === 'tr'">{{ selectedUpdate().title }}</h3>
+        <p class="update-right-description">{{ selectedUpdate().description }}</p>
+      </div>
+    </div>
+    <div class="footer-container">
+        <div class="footer-column">
+          <h4>{{ t('landing.platform') }}</h4>
+          <ul>
+            <li><a href="#">{{ t('landing.overview') }}</a></li>
+            <li><a href="#">{{ t('landing.features') }}</a></li>
+            <li><a href="#">{{ t('landing.architecture') }}</a></li>
+            <li><a href="#">{{ t('landing.integrations') }}</a></li>
+            <li class="footer-language-item">
+              <div class="footer-language-dropdown">
+                <button 
+                  type="button"
+                  class="footer-language-button"
+                  (click)="toggleDropdown()"
+                  [attr.aria-expanded]="isDropdownOpen">
+                  <span>{{ getSelectedLanguage().flag }} {{ getSelectedLanguage().label }}</span>
+                  <fa-icon [icon]="faChevronDown" [class.rotated]="isDropdownOpen"></fa-icon>
+                </button>
+                <div class="footer-language-menu" *ngIf="isDropdownOpen">
+                  <button
+                    *ngFor="let language of languages"
+                    type="button"
+                    class="footer-language-option"
+                    [class.active]="selectedLanguage === language.code"
+                    (click)="onLanguageChange(language.code)">
+                    {{ language.flag }} {{ language.label }}
+                  </button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>{{ t('landing.solutions') }}</h4>
+          <ul>
+            <li><a href="#">{{ t('landing.incidentManagement') }}</a></li>
+            <li><a href="#">{{ t('landing.aiops') }}</a></li>
+            <li><a href="#">{{ t('landing.observability') }}</a></li>
+            <li><a href="#">{{ t('landing.automation') }}</a></li>
+            <li><a href="#">{{ t('landing.aiAgents') }}</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>{{ t('landing.resources') }}</h4>
+          <ul>
+            <li><a href="#">{{ t('landing.documentation') }}</a></li>
+            <li><a href="#">{{ t('landing.apiReference') }}</a></li>
+            <li><a href="#">{{ t('landing.blog') }}</a></li>
+            <li><a href="#">{{ t('landing.webinars') }}</a></li>
+            <li><a href="#">{{ t('landing.support') }}</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>{{ t('landing.about') }}</h4>
+          <ul>
+            <li><a href="#">{{ t('landing.company') }}</a></li>
+            <li><a href="#">{{ t('landing.team') }}</a></li>
+            <li><a href="#">{{ t('landing.careers') }}</a></li>
+            <li><a href="#">{{ t('landing.press') }}</a></li>
+            <li><a href="#">{{ t('landing.contact') }}</a></li>
+          </ul>
+      </div>
+    </div>
+    <div class="footer-branding">
+      <img src="/images/archx_logo.png" alt="ArchX Logo" style="width: 165px; height: 112px;cursor: pointer;" (click)="scrollToTop()"
+        >
+      <span class="by-text">{{ t('landing.by') }}</span>
+      <a href="https://justech.com.tr" target="_blank" rel="noopener noreferrer">
+        <img src="/images/justech_logo.png" alt="Justech Logo" style="width: 241px; height: 61px;">
+      </a>
+    </div>
+  </div>
+</div>

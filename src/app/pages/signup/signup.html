@@ -1,0 +1,114 @@
+<img src="/images/snake.png" alt="Snake background" class="background-image" />
+<div class="page-container">
+    <div class="frame-container">
+        <div class="glass-container">
+            <header class="header-buttons">
+                <button class="back-button" type="button" (click)="navigateToSignIn()" [disabled]="isLoading">
+                    <fa-icon [icon]="faChevronLeft"></fa-icon>
+                </button>
+                <div class="language-selector">
+                    <button 
+                        type="button"
+                        class="language-button"
+                        (click)="toggleDropdown()"
+                        [disabled]="isLoading"
+                        [attr.aria-expanded]="isDropdownOpen">
+                        <span>{{ getSelectedLanguage().flag }} {{ getSelectedLanguage().label }}</span>
+                        <fa-icon [icon]="faChevronDown" [class.rotated]="isDropdownOpen"></fa-icon>
+                    </button>
+                    <div class="language-menu" *ngIf="isDropdownOpen">
+                        <button
+                            *ngFor="let language of languages"
+                            type="button"
+                            class="language-option"
+                            [class.active]="selectedLanguage === language.code"
+                            (click)="onLanguageChange(language.code)">
+                            {{ language.flag }} {{ language.label }}
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <div class="bottom-container">
+                <h2 class="signup-title">{{ t('signup.title') }}</h2>
+
+                <!-- Sign Up Form -->
+                <form (ngSubmit)="onSignUp()" class="form-section" [class.disabled]="isLoading">
+                    <div class="input-group">
+                        <div class="left-group">
+                            <input type="text" [(ngModel)]="firstName" name="firstName" [placeholder]="t('signup.firstName')"
+                                required class="input-field" [disabled]="isLoading" />
+                            <input type="text" [(ngModel)]="lastName" name="lastName" [placeholder]="t('signup.lastName')" required
+                                class="input-field" [disabled]="isLoading" />
+                            <div class="select-wrapper">
+                                <select [(ngModel)]="field" name="field" required class="input-field select-field" [disabled]="isLoading">
+                                    <option value="" disabled>{{ t('signup.field') }}</option>
+                                    <option *ngFor="let option of fieldOptions" [value]="option.value">
+                                        {{ option.label }}
+                                    </option>
+                                </select>
+                                <fa-icon [icon]="faChevronDown" class="select-chevron"></fa-icon>
+                            </div>
+                            <input type="text" [(ngModel)]="company" name="company" [placeholder]="t('signup.company')" required
+                                class="input-field" [disabled]="isLoading" />
+                            <div class="select-wrapper">
+                                <select [(ngModel)]="selectedCountryCode" name="country" required class="input-field select-field"
+                                    [disabled]="isLoading" (ngModelChange)="onCountrySelectionChange($event)">
+                                    <option value="" disabled>{{ t('signup.country') }}</option>
+                                    <option *ngFor="let countryOption of countryOptions" [value]="countryOption.code">
+                                        {{ countryOption.name }} ({{ countryOption.dialCode }})
+                                    </option>
+                                </select>
+                                <fa-icon [icon]="faChevronDown" class="select-chevron"></fa-icon>
+                            </div>
+                            <input type="text" [(ngModel)]="city" name="city" [placeholder]="t('signup.city')" required
+                                class="input-field" [disabled]="isLoading" />
+                            <div class="select-wrapper">
+                                <select [(ngModel)]="phoneCountryCode" name="phoneCountryCode" required
+                                    class="input-field select-field" [disabled]="isLoading" (ngModelChange)="updatePhone()">
+                                    <option value="" disabled>{{ t('signup.phone') }}</option>
+                                    <option *ngFor="let countryOption of countryOptions" [value]="countryOption.dialCode">
+                                        {{ countryOption.dialCode }} - {{ countryOption.name }}
+                                    </option>
+                                </select>
+                                <fa-icon [icon]="faChevronDown" class="select-chevron"></fa-icon>
+                            </div>
+                            <input type="tel" [(ngModel)]="phoneNumber" name="phoneNumber"
+                                [placeholder]="t('signup.phone')" required class="input-field"
+                                [disabled]="isLoading" (ngModelChange)="updatePhone()" />
+                        </div>
+                        <div class="right-group">
+                            <input type="email" [(ngModel)]="email" name="email" [placeholder]="t('signup.email')" required
+                                class="input-field" [disabled]="isLoading" />
+                            <input type="text" [(ngModel)]="role" name="role" [placeholder]="t('signup.role')" required
+                                class="input-field" [disabled]="isLoading" />
+                            <input type="text" [(ngModel)]="organizationalUnit" name="organizationalUnit"
+                                [placeholder]="t('signup.organizationalUnit')" required class="input-field" [disabled]="isLoading" />
+                            <input type="text" [(ngModel)]="notes" name="notes" [placeholder]="t('signup.notes')" required
+                                class="input-field" [disabled]="isLoading" />
+                        </div>
+
+                    </div>
+                    <div class="error-message" *ngIf="errorMessage">
+                        {{ errorMessage }}
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">{{ t('signup.terms') }}</label>
+                    <div class="captcha-container">
+                        <!-- Placeholder for CAPTCHA widget -->
+                        
+                        
+                    </div>
+
+                    </div>
+                    <div class="submit-section">
+                        <button type="submit" class="login-button" [disabled]="isLoading">
+                            <span class="button-text" *ngIf="!isLoading">{{ t('signup.signUpButton') }}</span>
+                            <span class="button-text" *ngIf="isLoading">{{ t('signup.signingUp') }}</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

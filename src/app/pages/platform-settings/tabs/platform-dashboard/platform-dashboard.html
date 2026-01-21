@@ -1,0 +1,57 @@
+<main class="tab-container">
+  <div class="dashboard-grid">
+    <div class="metric-card" *ngFor="let metric of metrics">
+      <div class="header-section" [style.background]="'linear-gradient(90deg, ' + metric.barColor + '50 0%, transparent 100%)'">
+        <div class="bar" [style.background-color]="metric.barColor"></div>
+        <div class="header-content">
+          <span class="title">{{ metric.title }}</span>
+          <div class="subtext" *ngIf="metric.subtext">{{ metric.subtext }}</div>
+        </div>
+      </div>
+      <div class="content-section">
+        <div class="value">{{ metric.value }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="usage-grid">
+    <div class="usage-card" *ngFor="let usage of usageMetrics">
+      <div class="card-header">
+        <ng-icon [name]="usage.icon" class="icon"></ng-icon>
+        <span class="title">{{ usage.title }}</span>
+      </div>
+      
+      <div class="card-content">
+        <!-- Progress Bar Type -->
+        <ng-container *ngIf="usage.type === 'progress'">
+          <div class="subtext" *ngIf="usage.subtext">{{ usage.subtext }}</div>
+          <div class="progress-container">
+            <div class="progress-bar" [style.width.%]="usage.percent">
+              <span class="progress-label">% {{ usage.percent }}</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Text/Value Type -->
+        <ng-container *ngIf="usage.type === 'text'">
+          <div class="value-large">{{ usage.value }}</div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div class="operations-grid">
+    <div class="operation-card" *ngFor="let op of operationsData">
+      <div class="card-header-section">
+        <div class="header-bar" [style.background]="op.barGradient"></div>
+        <div class="header-bg-gradient" [style.background]="'linear-gradient(90deg, ' + op.barGradient.split(' ')[1] + '11' + ' 0%, transparent 100%)'"></div> <!-- Subtle wash behind title -->
+        <span class="title">{{ op.title }}</span>
+      </div>
+      <div class="actions-list">
+        <button class="action-btn" *ngFor="let action of op.actions">
+          {{ action }}
+        </button>
+      </div>
+    </div>
+  </div>
+</main>

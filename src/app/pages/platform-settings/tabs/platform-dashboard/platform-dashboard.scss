@@ -1,0 +1,253 @@
+* {
+  font-family: 'Inter', sans-serif;
+  color: #EDEAF1;
+  box-sizing: border-box;
+}
+
+.tab-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-radius: 24px;
+  background-color: #141326;
+  padding: 27px 20px 12px 20px;
+  height: 100%;
+  overflow-y: auto;
+  gap: 2rem; 
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr); 
+  row-gap: 1rem;
+  column-gap: 2rem;
+  width: 100%;
+}
+
+.metric-card {
+  background-color: #1E1C30;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column; // Stack header and value vertically
+  overflow: hidden;
+  min-height: 120px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #2D2B45; 
+
+  .header-section {
+    display: flex;
+    flex-direction: row;
+    align-items: start; // Align items vertically in header
+    justify-content: start;
+    padding: 0; // Remove general padding
+    height: 48px; // Fixed height for the header bar area
+    width: 100%;
+    position: relative; // For absolute bar positioning if needed, or flex is fine
+
+    .bar {
+      width: 20px;
+      height: 100%;
+      flex-shrink: 0;
+    }
+
+    .header-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: start;
+      padding-left: 12px;
+      padding-right: 12px;
+      padding-top: 6px;
+      
+      .title {
+        font-weight: 300;
+        font-size: 16px;
+        line-height: 19px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .subtext {
+        // Hide subtext in this compact header view or style differently if needed
+        // For now based on image, subtext isn't clearly visible in the header strip 
+        // but if it needs to be there:
+        display: none; 
+      }
+    }
+  }
+
+  .content-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 16px;
+    
+    .value {
+
+      font-family: 'Syne';
+      font-weight: 400;
+      font-size: 56px;
+      line-height: 67px;
+    }
+  }
+}
+
+.usage-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.usage-card {
+  background-color: #1E1C30;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100px;
+  border: 1px solid #2D2B45;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    .icon {
+      font-size: 24px;
+      color: #EDEAF1;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #EDEAF1;
+    }
+  }
+
+  .card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; 
+    
+    .subtext {
+      font-size: 12px;
+      color: #A0AEC0;
+      margin-bottom: 6px;
+    }
+
+    .value-large {
+      font-size: 28px;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 24px;
+      background-color: #2D2B45;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: #6B46C1;
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      transition: width 0.3s ease;
+
+      .progress-label {
+        font-size: 11px;
+        color: #FFFFFF;
+        white-space: nowrap;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.operations-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+.operation-card {
+  background-color: #1E1C30;
+  border-radius: 8px;
+  border: 1px solid #2D2B45;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .card-header-section {
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 48px; 
+    padding-left: 16px; 
+    
+    .header-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px; 
+      border-radius: 2px; 
+    }
+
+    .header-bg-gradient {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        opacity: 0.1;
+        pointer-events: none;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #FFFFFF;
+      margin-left: 12px; 
+    }
+  }
+
+  .actions-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+
+    .action-btn {
+      background: transparent;
+      border: 1px solid #4A5568; 
+      border-radius: 20px; 
+      padding: 10px 16px;
+      text-align: left;
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 27px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #2D3748;
+        border-color: #718096;
+      }
+    }
+  }
+}

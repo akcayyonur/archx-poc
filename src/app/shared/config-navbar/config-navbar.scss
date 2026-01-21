@@ -1,0 +1,180 @@
+.config-navbar {
+    height: 60px;
+    width : 1170px;
+    flex-shrink: 0;
+    border-radius: 22px;
+    background: #2A2047;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    height: 100%;
+    gap: 45px;
+}
+.nav-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 22px;
+    transition: all 0.3s ease;
+    width: 108px;
+    height: 100%;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    
+    &:hover {
+        background: rgba(126, 104, 225, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(126, 104, 225, 0.3);
+    }
+    
+    &:active {
+        transform: translateY(0);
+        transition: all 0.1s ease;
+    }
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+    
+    &:hover::before {
+        left: 100%;
+    }
+    
+    &.active {
+        background: #7E68E1;
+        box-shadow: 0 0 0 0 #5549EC, 0 0 0 0 #5549EC, 0 0 0 0 #5549EC, 0 0 0 0 #5549EC, 0 0 0 0 #5549EC, 0 0 0 0 #5549EC;
+    }
+}
+.user-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding-right: 6px;
+}
+.divider {
+    width: 1px;
+    height: 50px;
+    background: #18102B;
+}
+.notification-button, .account-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    &:active {
+        transform: translateY(0);
+        transition: all 0.1s ease;
+    }
+}
+.account-dropdown {
+    position: relative;
+}
+
+.account-button{
+    border-radius: 22px;
+    background: #18102B;
+    height: 50px;
+    width: 78px;
+    
+    &:hover {
+        background: #2A2047;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(126, 104, 225, 0.3);
+    }
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #2A2047;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    min-width: 180px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    border: 1px solid #18102B;
+    margin-top: 8px;
+
+    &.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-tertiary), 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+
+    &:first-child {
+        border-radius: 12px 12px 0 0;
+    }
+
+    &:last-child {
+        border-radius: 0 0 12px 12px;
+    }
+
+    &:hover {
+        background: #7E68E1;
+        color: #ffffff;
+    }
+
+    &:active {
+        background: #5549EC;
+    }
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+
+    span {
+        flex: 1;
+    }
+}

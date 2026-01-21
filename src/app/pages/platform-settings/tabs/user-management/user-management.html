@@ -1,0 +1,96 @@
+<main class="tab-container">
+  <div class="section-header">
+    <div class="section-header-content">
+      <div class="section-header-titles">
+        <h2>User Management</h2>
+        <p>Superuser Management Panel</p>
+      </div>
+      <div class="section-header-actions">
+        <button class="btn-secondary">LDAP Config</button>
+        <div class="action-divider"></div>
+        <button class="btn-secondary">Sync LDAP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teams Section -->
+  <div class="teams-section">
+    <div class="teams-header">
+      <h3>Teams</h3>
+    </div>
+    <div class="teams-grid">
+      <div class="team-card" *ngFor="let team of teams">
+        <div class="team-card-header" [style.background]="'linear-gradient(to right, ' + team.color + '35, transparent)'">
+          <div class="team-card-accent" [style.background-color]="team.color"></div>
+          <h4>{{ team.name }}</h4>
+        </div>
+        <div class="team-card-content">
+          <ng-icon [name]="team.icon" class="team-icon"></ng-icon>
+          <div class="team-card-info">
+            <p>{{ team.description }}</p>
+            <div class="team-members">{{ team.members }} members</div>
+          </div>
+          <button class="team-delete-btn" (click)="deleteTeam(team.id)">
+            <ng-icon name="phosphorTrash"></ng-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="teams-footer">
+      <button class="add-team-btn">
+        <span>+ Add Team</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Users Section -->
+  <div class="users-section">
+    <div class="users-header">
+      <h3>Users</h3>
+    </div>
+    <div class="users-table-container">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Team</th>
+            <th>Source</th>
+            <th>Status</th>
+            <th>Last Login</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.team }}</td>
+            <td>{{ user.source }}</td>
+            <td>
+              <span class="status-badge" [class.active]="user.status === 'Active'" [class.inactive]="user.status === 'Inactive'">
+                {{ user.status }}
+              </span>
+            </td>
+            <td>{{ user.lastLogin }}</td>
+            <td class="actions-cell">
+              <button class="action-btn" (click)="editUser(user.id)">
+                <ng-icon name="phosphorPencil"></ng-icon>
+              </button>
+              <button class="action-btn" (click)="deleteUser(user.id)">
+                <ng-icon name="phosphorTrash"></ng-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="users-footer">
+      <button class="add-user-btn">
+        <span>+ Add User</span>
+      </button>
+    </div>
+  </div>
+</main>

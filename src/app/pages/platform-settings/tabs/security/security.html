@@ -1,0 +1,123 @@
+<main class="tab-container">
+  <div class="section-header">
+    <div class="section-header-content">
+      <div class="section-header-titles">
+        <h2>Security & KVKK Settings</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="security-content">
+    <!-- Password Policy Section -->
+    <div class="security-section">
+      <h3 class="section-title">Password Policy</h3>
+      <div class="section-content">
+        <div class="input-row">
+          <div class="config-field">
+            <input 
+              type="number" 
+              class="input-field" 
+              placeholder="Minimum Length"
+              [(ngModel)]="passwordPolicy.minLength"
+              [ngModelOptions]="{ standalone: true }">
+          </div>
+          <div class="config-field">
+            <input 
+              type="number" 
+              class="input-field" 
+              placeholder="Password Expiry (days)"
+              [(ngModel)]="passwordPolicy.expiryDays"
+              [ngModelOptions]="{ standalone: true }">
+          </div>
+        </div>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              class="checkbox-input"
+              [(ngModel)]="passwordPolicy.requireUppercase"
+              [ngModelOptions]="{ standalone: true }">
+            <span>Require Uppercase Letters</span>
+          </label>
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              class="checkbox-input"
+              [(ngModel)]="passwordPolicy.requireUppercase2"
+              [ngModelOptions]="{ standalone: true }">
+            <span>Require Uppercase Letters</span>
+          </label>
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              class="checkbox-input"
+              [(ngModel)]="passwordPolicy.requireUppercase3"
+              [ngModelOptions]="{ standalone: true }">
+            <span>Require Uppercase Letters</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session & Authentication Section -->
+    <div class="security-section">
+      <h3 class="section-title">Session & Authentication</h3>
+      <div class="section-content">
+        <div class="config-field">
+          <input 
+            type="number" 
+            class="input-field" 
+            placeholder="Session Timeout (minutes)"
+            [(ngModel)]="sessionAuth.sessionTimeout"
+            [ngModelOptions]="{ standalone: true }">
+        </div>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              class="checkbox-input"
+              [(ngModel)]="sessionAuth.requireUppercase"
+              [ngModelOptions]="{ standalone: true }">
+            <span>Require Uppercase Letters</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- KVKK Compliance Section -->
+    <div class="security-section">
+      <h3 class="section-title">KVKK Compliance</h3>
+      <div class="section-content">
+        <div class="config-field">
+          <input 
+            type="text" 
+            class="input-field" 
+            placeholder="Data Retention Period"
+            [(ngModel)]="kvkkCompliance.dataRetentionPeriod"
+            [ngModelOptions]="{ standalone: true }">
+        </div>
+        <div class="kvkk-actions">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              class="checkbox-input"
+              [(ngModel)]="kvkkCompliance.enabled"
+              [ngModelOptions]="{ standalone: true }">
+            <span>KVKK Compliance Enabled</span>
+          </label>
+          <button class="export-kvkk-btn" (click)="exportKvkkData()">
+            <ng-icon name="phosphorArrowSquareUp"></ng-icon>
+            <span>Export KVKK Data</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button class="btn-save" (click)="saveSettings()">Save Settings</button>
+    <button class="btn-audit" (click)="runSecurityAudit()">Run Security Audit</button>
+  </div>
+</main>
+

@@ -1,0 +1,31 @@
+name: Build and Deploy Angular Client (Demo - Localhost)
+
+on:
+  push:
+    branches:
+      - demo
+
+jobs:
+  deploy:
+    runs-on: demo-runner
+    environment: demo
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+      REGISTRY_HOST: registry.justech.local:5000
+      CLIENT_CONTAINER_NAME: archx-client
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build and push image
+        run: |
+          docker build -t ${REGISTRY_HOST}/archx-client:${IMAGE_TAG} .
+          docker push ${REGISTRY_HOST}/archx-client:${IMAGE_TAG}
+
+      - name: Deploy container (replace running instance)
+        shell: bash
+        run: |
+          docker rm -f ${CLIENT_CONTAINER_NAME} || true
+          docker run -d --name ${CLIENT_CONTAINER_NAME} --restart unless-stopped \
+            -p 8080:80 ${REGISTRY_HOST}/archx-client:${IMAGE_TAG}

@@ -1,0 +1,940 @@
+.page-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #040517;
+  font-family: 'Inter', sans-serif;
+}
+
+.content-wrapper {
+  margin-left: 74px;
+  flex: 1;
+  padding-top: 26px;
+  padding-left: 18px;
+  padding-right: 18px;
+  padding-bottom: 2rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  max-width: calc(100vw - 74px);
+}
+
+.header-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+
+.page-title {
+
+font-family: 'Inter', sans-serif;
+font-style: normal;
+font-weight: 800;
+font-size: 32px;
+line-height: 39px;
+
+}
+
+.page-subtitle {
+  color: rgba(237, 234, 241, 0.7);
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0;
+}
+
+// KPI Cards Section
+.kpi-cards-container {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.cards-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 20px;
+  margin-top: 2rem;
+  width: 100%;
+
+  .chevron {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    flex-shrink: 0;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    &:not(:disabled) {
+      pointer-events: auto;
+    }
+
+    i {
+      font-size: 24px;
+    }
+  }
+
+  .cards-container {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    overflow-y: clip;
+    align-items: stretch;
+    .card {
+      box-sizing: border-box;
+      width: 270px;
+      max-width: 270px;
+      min-height: 232px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: clamp(0.75rem, 1vw, 1rem) clamp(1rem, 1.25vw, 1.25rem);
+      color: #EDEAF1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+
+      // Add divider between rows - using a more flexible approach
+      // This will add dividers to all cards except those that might be in the last row
+      // The exact logic depends on viewport width, so we use a general approach
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      // Remove divider from cards that are likely in the last row
+      // This is approximate and works best with 4-column layout at 1440px
+      @media (min-width: 1200px) {
+        &:nth-last-child(-n+4)::after {
+          display: none;
+        }
+      }
+
+      &.card-color-0 {
+        background: linear-gradient(127.17deg, #1C1724 2.57%, #52304C 98.1%);
+        border: 1px solid rgba(255, 248, 248, 0.22);
+      }
+      &.card-color-1 {
+        background: linear-gradient(126.44deg, #1B1D3D 0%, #7C60AC 100%);
+        border: 1px solid rgba(251, 245, 245, 0.22);
+      }
+      &.card-color-2 {
+        background: linear-gradient(126.37deg, rgba(25, 26, 42, 0.81) 2.01%, #6C3E3E 100%);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+      }
+      &.card-color-3 {
+        background: linear-gradient(125.36deg, #1D1E2A 1.61%, #475230 100%);
+        border: 1px solid rgba(251, 240, 240, 0.22);
+      }
+      &.card-color-4 {
+        background: linear-gradient(126.5deg, #1A1B2E 0%, #4A3D5C 100%);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+      }
+      &.card-color-5 {
+        background: linear-gradient(125.8deg, #1E1F2A 1.2%, #3D4A5C 98.5%);
+        border: 1px solid rgba(255, 248, 248, 0.22);
+      }
+
+  
+      .card-header {
+        h3 {
+          font-size: 16px;
+          font-weight: 600;
+          line-height: 1.5;
+          margin-bottom: 0.75rem;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          padding-bottom: 0.75rem;
+        }
+      }
+  
+      .card-body {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(0.5rem, 0.75vw, 0.75rem);
+        flex: 1;
+        overflow: visible;
+        justify-content: space-between;
+
+        .metric-row {
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+        }
+  
+        .metric {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          flex: 1;
+  
+          .metric-label {
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.4;
+            color: #A0AEC0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+  
+          .metric-value {
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.5;
+            white-space: nowrap;
+            overflow: hidden;
+
+            &.response-time { color: #D2F65C; }
+            &.throughput { color: #D2F65C; }
+            &.errors { color: #FF6F61; }
+            &.version { color: #A36EFF; }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Charts Container - holds both charts side by side
+.charts-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  width: 100%;
+  // Removed unnecessary max-width calculation that was causing alignment issues
+
+  // 1920px: Scale gap
+  @media (min-width: 1920px) {
+    gap: 0.665rem;
+  }
+
+  // 2560px (2K): Scale gap
+  @media (min-width: 2560px) {
+    gap: 0.89rem;
+  }
+
+  // 3840px (4K): Scale gap
+  @media (min-width: 3840px) {
+    gap: 1.335rem;
+  }
+}
+
+// Data Volume Chart Section
+// Figma: 523x320 at 1440px frame
+// Responsive for: 1440px, 1920px, 2560px (2K), 3840px (4K)
+.data-volume-chart-section,
+.usage-intensity-chart-section {
+  flex: 1;
+  background: #151425;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-sizing: border-box;
+  
+  // Base size at 1440px: 320px height, width is flexible
+  height: 300px;
+  padding: 1rem;
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    height: auto;
+
+    .chart-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #EDEAF1;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .time-filters {
+      display: flex;
+      gap: 0.5rem;
+
+      .time-filter {
+          background: #EDEAF1;
+          border: 1px solid #EDEAF1;
+          border-radius: 8px;
+          font-family: 'Inter', sans-serif;
+          color: black;
+          padding: 0.25rem 0.5rem;
+          cursor: pointer;
+          font-size: 10px;
+          font-weight: 500;
+          transition: 
+            background 0.25s cubic-bezier(0.4,0,0.2,1), 
+            color 0.2s, 
+            border-color 0.2s;
+          white-space: nowrap;
+          height: 25px;
+          min-width: 32px;
+          width: 38px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            background: #e3d5ff;
+            color: #3c2864;
+          }
+
+          &.active {
+            background: #24223c;
+            border-color: #EDEAF1;
+            color: #EDEAF1;
+            font-weight: 600;
+            box-shadow: none;
+          }
+      }
+    }
+  }
+
+  .chart-container {
+    position: relative;
+    // Chart height = total height (320px) - header (~60px) - padding (~32px) = ~228px
+    height: 228px;
+    width: 100%;
+  }
+
+  // 1920px: Scale by 1.33x (426px height)
+  @media (min-width: 1920px) {
+    height: 426px;
+    padding: 1.33rem;
+
+    .chart-header {
+      margin-bottom: 1rem;
+
+      .chart-title {
+        font-size: 21px;
+      }
+
+      .time-filters {
+        gap: 0.67rem;
+
+        .time-filter {
+          padding: 0.33rem 0.67rem;
+          font-size: 13px;
+          min-width: 42px;
+          width: 42px;
+        }
+      }
+    }
+
+    .chart-container {
+      height: 304px;
+    }
+  }
+
+  // 2560px (2K): Scale by 1.78x (568px height)
+  @media (min-width: 2560px) {
+    height: 568px;
+    padding: 1.78rem;
+
+    .chart-header {
+      margin-bottom: 1.33rem;
+
+      .chart-title {
+        font-size: 28px;
+      }
+
+      .time-filters {
+        gap: 0.89rem;
+
+        .time-filter {
+          padding: 0.45rem 0.89rem;
+          font-size: 17px;
+          min-width: 56px;
+          width: 56px;
+        }
+      }
+    }
+
+    .chart-container {
+      height: 406px;
+    }
+  }
+
+  // 3840px (4K): Scale by 2.67x (852px height)
+  @media (min-width: 3840px) {
+    height: 852px;
+    padding: 2.67rem;
+
+    .chart-header {
+      margin-bottom: 2rem;
+
+      .chart-title {
+        font-size: 43px;
+      }
+
+      .time-filters {
+        gap: 1.33rem;
+
+        .time-filter {
+          padding: 0.67rem 1.33rem;
+          font-size: 26px;
+          min-width: 85px;
+          width: 85px;
+        }
+      }
+    }
+
+    .chart-container {
+      height: 608px;
+    }
+  }
+}
+
+.system-health-container {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+  
+  // Base layout for 1440px width
+  // Uses proportional fractions based on original 409:500:257 ratio
+  grid-template-columns: 3.5fr 4.3fr 2.2fr;
+  justify-content: stretch;
+
+  .chart-card {
+    background: #151425;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    height: 350px;
+    max-height: 350px;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+
+      .chart-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: #EDEAF1;
+        margin: 0;
+      }
+
+      .time-filters {
+        display: flex;
+        gap: 0.5rem;
+
+        .time-filter {
+          background: #EDEAF1;
+          border: 1px solid #EDEAF1;
+          border-radius: 8px;
+          font-family: 'Inter', sans-serif;
+          color: black;
+          padding: 0.25rem 0.5rem;
+          cursor: pointer;
+          font-size: 10px;
+          font-weight: 500;
+          transition:
+            background 0.25s cubic-bezier(0.4,0,0.2,1),
+            color 0.2s,
+            border-color 0.2s;
+          white-space: nowrap;
+          min-width: 32px;
+          width: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            background: #e3d5ff;
+            color: #3c2864;
+          }
+
+          &.active {
+            background: #24223c;
+            border-color: #EDEAF1;
+            color: #EDEAF1;
+            font-weight: 600;
+            box-shadow: none;
+          }
+        }
+      }
+    }
+
+    .chart-body {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      min-height: 0;
+      max-height: calc(350px - 4rem); // Account for header and padding
+    }
+  }
+
+  // MTTR Chart (first child)
+  .chart-card:first-child {
+    
+    .chart-body {
+      canvas {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+  }
+
+  // Uptime Chart (second child)
+  .chart-card:nth-child(2) {
+  }
+
+  // Health Check Chart (third child)
+  .chart-card:nth-child(3) {
+  }
+
+  // Responsive breakpoints
+  @media (max-width: 1440px) {
+    // For screens smaller than 1440px, use flexible layout
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    
+    .chart-card {
+      width: 100%;
+      max-width: 100%;
+      
+      &:first-child,
+      &:nth-child(2),
+      &:nth-child(3) {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  }
+
+  // For larger screens, use proportional columns to fill available space
+  // Maintains the same ratio (409:500:257) but scales to fill width
+  @media (min-width: 1920px) {
+    $scale: 1.33;
+    // Use fr units to maintain proportions while filling available space
+    grid-template-columns: 0.351fr 0.429fr 0.220fr;
+    justify-content: stretch;
+    gap: 0.5rem;
+    
+    .chart-card {
+      height: #{350px * $scale};
+      max-height: #{350px * $scale};
+      padding: #{1.5rem * $scale};
+      width: 100%;
+      max-width: 100%;
+      
+      &:first-child,
+      &:nth-child(2),
+      &:nth-child(3) {
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      .chart-body {
+        max-height: calc(#{350px * $scale} - #{4rem * $scale});
+      }
+
+      .chart-header {
+        .time-filters {
+          gap: 0.67rem;
+
+          .time-filter {
+            padding: 0.33rem 0.67rem;
+            font-size: 13px;
+            min-width: 42px;
+            width: 42px;
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 2560px) {
+    $scale: 1.78;
+    grid-template-columns: 0.351fr 0.429fr 0.220fr;
+    justify-content: stretch;
+    gap: 1.78rem;
+    
+    .chart-card {
+      height: #{350px * $scale};
+      max-height: #{350px * $scale};
+      padding: #{1.5rem * $scale};
+      width: 100%;
+      max-width: 100%;
+      
+      &:first-child,
+      &:nth-child(2),
+      &:nth-child(3) {
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      .chart-body {
+        max-height: calc(#{350px * $scale} - #{4rem * $scale});
+      }
+
+      .chart-header {
+        .time-filters {
+          gap: 0.89rem;
+
+          .time-filter {
+            padding: 0.45rem 0.89rem;
+            font-size: 17px;
+            min-width: 56px;
+            width: 56px;
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 3840px) {
+    $scale: 2.67;
+    grid-template-columns: 0.351fr 0.429fr 0.220fr;
+    justify-content: stretch;
+    gap: 2.67rem;
+    
+    .chart-card {
+      height: #{350px * $scale};
+      max-height: #{350px * $scale};
+      padding: #{1.5rem * $scale};
+      width: 100%;
+      max-width: 100%;
+      
+      &:first-child,
+      &:nth-child(2),
+      &:nth-child(3) {
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      .chart-body {
+        max-height: calc(#{350px * $scale} - #{4rem * $scale});
+      }
+
+      .chart-header {
+        .time-filters {
+          gap: 1.33rem;
+
+          .time-filter {
+            padding: 0.67rem 1.33rem;
+            font-size: 26px;
+            min-width: 85px;
+            width: 85px;
+          }
+        }
+      }
+    }
+  }
+
+  // Uptime table styles
+  .uptime-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #EDEAF1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(350px - 4rem);
+    padding-right: 0.5rem;
+    box-sizing: border-box;
+
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(164, 15, 252, 0.5);
+      border-radius: 3px;
+
+      &:hover {
+        background: rgba(164, 15, 252, 0.7);
+      }
+    }
+
+    .uptime-header, .uptime-row {
+      display: grid;
+      grid-template-columns: 1fr 0.7fr 1.5fr 0.7fr;
+      align-items: center;
+      padding: 0.4rem 0;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .uptime-header {
+      font-weight: 600;
+      color: #BFADD4;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.7rem;
+      position: sticky;
+      top: 0;
+      background: #151425;
+      z-index: 1;
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.25rem;
+      
+      span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+    
+    .uptime-row {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      min-height: 35px;
+      font-size: 0.7rem;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+      }
+
+      .status-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        min-width: 0;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+
+        &.active { background-color: #D2F65C; }
+        &.warning { background-color: #FF6F61; }
+        &.stopped { background-color: #A36EFF; }
+      }
+
+      .uptime-days {
+        display: flex;
+        gap: 2px;
+        justify-content: center;
+        flex-wrap: wrap;
+        max-width: 100%;
+
+        .day-box {
+          width: 32px;
+          height: 16px;
+          background-color: rgba(255, 255, 255, 0.1);
+          border-radius: 6px;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          flex-shrink: 0;
+
+          &.filled {
+            background-color: #BFADD4;
+            border-color: #BFADD4;
+          }
+        }
+      }
+    }
+  }
+  
+  // Health Check styles
+  .health-check-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .health-chart-container {
+    // Base size at 1440px: 180px
+    width: 180px;
+    height: 180px;
+    max-width: 100%;
+    max-height: 100%;
+    position: relative;
+    flex-shrink: 0;
+
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+
+  .health-legend {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    width: 100%;
+    flex-shrink: 0;
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.5rem;
+      color: #EDEAF1;
+      white-space: nowrap;
+
+      .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+
+        &.working { background-color: #D2F65C; }
+        &.warning { background-color: #FF6F61; }
+        &.stopped { background-color: #A36EFF; }
+      }
+
+      span:last-child {
+        font-weight: 500;
+      }
+    }
+  }
+
+  // Responsive scaling for health check at different resolutions
+  @media (min-width: 1920px) {
+    $scale: 1.33;
+    
+    .chart-card:nth-child(3) {
+      .health-check-body {
+        gap: #{1rem * $scale};
+        padding: #{0.5rem * $scale};
+      }
+      
+      .health-chart-container {
+        width: #{180px * $scale};
+        height: #{180px * $scale};
+      }
+      
+      .health-legend {
+        gap: #{0.75rem * $scale};
+        
+        .legend-item {
+          gap: #{0.5rem * $scale};
+          font-size: #{0.65rem * $scale};
+          
+          .legend-dot {
+            width: #{10px * $scale};
+            height: #{10px * $scale};
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 2560px) {
+    $scale: 1.78;
+    
+    .chart-card:nth-child(3) {
+      .health-check-body {
+        gap: #{1rem * $scale};
+        padding: #{0.5rem * $scale};
+      }
+      
+      .health-chart-container {
+        width: #{180px * $scale};
+        height: #{180px * $scale};
+      }
+      
+      .health-legend {
+        gap: #{0.75rem * $scale};
+        
+        .legend-item {
+          gap: #{0.5rem * $scale};
+          font-size: #{0.65rem * $scale};
+          
+          .legend-dot {
+            width: #{10px * $scale};
+            height: #{10px * $scale};
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 3840px) {
+    $scale: 2.67;
+    
+    .chart-card:nth-child(3) {
+      .health-check-body {
+        gap: #{1rem * $scale};
+        padding: #{0.5rem * $scale};
+      }
+      
+      .health-chart-container {
+        width: #{180px * $scale};
+        height: #{180px * $scale};
+      }
+      
+      .health-legend {
+        gap: #{0.75rem * $scale};
+        
+        .legend-item {
+          gap: #{0.5rem * $scale};
+          font-size: #{0.65rem * $scale};
+          
+          .legend-dot {
+            width: #{10px * $scale};
+            height: #{10px * $scale};
+          }
+        }
+      }
+    }
+  }
+}
+

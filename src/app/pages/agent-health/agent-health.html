@@ -1,0 +1,286 @@
+<div class="agent-health-page" *ngIf="agentMetrics as metrics; else loadingState">
+  <app-sidebar
+    class="agent-health-sidebar"
+    [agents]="agents"
+    [activeAgentId]="agentId">
+  </app-sidebar>
+
+  <main class="agent-health-content">
+    <section class="hero-card">
+      <div class="hero-top">
+        <div class="hero-title">
+          <span class="hero-logo">
+            <ng-icon name="phosphorLinkSimple" style="font-weight: bold;"></ng-icon>
+          </span>
+          <div class="hero-text">
+            <h1>{{ metrics.agentName }}</h1>
+            <p class="hero-description">
+              Real-time monitoring of data quality, ETL, model training, and business impact metrics.
+            </p>
+            <button type="button" class="ghost-button" (click)="goBack()">
+              <ng-icon name="phosphorCaretLeft"></ng-icon>
+              Back To Overview
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-controls">
+          <div class="date-picker-shell">
+            <div class="picker-field">
+              <label for="startDate">From</label>
+              <p-datepicker
+                inputId="startDate"
+                name="startDate"
+                [(ngModel)]="dateRange.start"
+                [ngModelOptions]="{ standalone: true }"
+                [showTime]="true"
+                hourFormat="24"
+                [showIcon]="false"
+                panelStyleClass="agent-date-panel"
+                dateFormat="dd.mm.yy"
+                placeholder="Select start">
+              </p-datepicker>
+            </div>
+            <div class="picker-field">
+              <label for="endDate">To</label>
+              <p-datepicker
+                inputId="endDate"
+                name="endDate"
+                [(ngModel)]="dateRange.end"
+                [ngModelOptions]="{ standalone: true }"
+                [showTime]="true"
+                hourFormat="24"
+                [showIcon]="false"
+                panelStyleClass="agent-date-panel"
+                dateFormat="dd.mm.yy"
+                placeholder="Select end">
+              </p-datepicker>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mini-stat-grid">
+      <article class="mini-stat-card gradient-1">
+        <span class="label">Current Status</span>
+        <span class="value status" [ngClass]="getStatusBadgeClass(metrics.etl.jobStatus)">
+          {{ getJobStatusLabel(metrics.etl.jobStatus) }}
+        </span>
+      </article>
+      <article class="mini-stat-card gradient-2">
+        <span class="label">Data Volume</span>
+        <div class="value">
+          {{ getDataVolumeDescriptor(metrics.etl.totalRecordsProcessed) }}
+        </div>
+        <span class="hint">{{ formatMillions(metrics.etl.totalRecordsProcessed, 1) }} records</span>
+      </article>
+      <article class="mini-stat-card gradient-3">
+        <span class="label">Version</span>
+        <div class="value">{{ metrics.aiModel.productionModelVersion }}</div>
+        <span class="hint">Model Deployment</span>
+      </article>
+      <article class="mini-stat-card gradient-4">
+        <span class="label">Last Update</span>
+        <div class="value">{{ formatDate(metrics.etl.lastSuccess) }}</div>
+        <span class="hint">{{ formatTime(metrics.etl.lastSuccess) }}</span>
+      </article>
+    </section>
+
+    <div class="panel-row two-up data-etl-layout">
+      <section class="panel data-quality-panel">
+        <header class="panel-header">
+          <div>
+            <p class="eyebrow">Data Quality Analysis</p>
+            <h2>Data Quality Score</h2>
+          </div>
+        </header>
+        <div class="data-quality-layout">
+          <div class="gauge-column">
+            <div class="gauge">
+              <canvas
+                baseChart
+                [data]="dqsGaugeChartData"
+                [options]="dqsGaugeChartOptions"
+                [type]="'doughnut'">
+              </canvas>
+              <div class="gauge-center">
+                <span class="score">{{ formatDecimal(metrics.dataQuality.dataQualityScore) }}%</span>
+                <span class="subtext">Total Score</span>
+              </div>
+            </div>
+            <div class="gauge-metrics">
+              <div class="metric">
+                <span>Validity</span>
+                <strong>{{ formatDecimal(metrics.dataQuality.validity) }}%</strong>
+              </div>
+              <div class="metric">
+                <span>Completeness</span>
+                <strong>{{ formatDecimal(metrics.dataQuality.completeness) }}%</strong>
+              </div>
+            </div>
+          </div>
+          <div class="dq-divider"></div>
+          <div class="dq-side">
+            <div class="side-card">
+              <span class="label">Duplicate Record :</span>
+              <div class="value">
+                <strong>{{ metrics.dataQuality.duplicateCount | number }}</strong>
+                <small>counted</small>
+              </div>
+            </div>
+            <div class="side-card">
+              <span class="label">Data Freshness</span>
+              <span class="static-text sub-label">Last Update</span>
+              <div class="value">
+                <strong>{{ metrics.dataQuality.dataFreshness }}</strong>
+                <span class="static-text"> ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel etl-panel">
+        <header class="panel-header">
+          <div>
+            <p class="eyebrow">ETL Monitoring</p>
+            <h2>Pipeline Health</h2>
+          </div>
+        </header>
+        <div class="etl-status-band" [ngClass]="getStatusBadgeClass(metrics.etl.jobStatus)">
+          <span>{{ metrics.etl.jobStatus }}</span>
+        </div>
+        <div class="etl-stats-grid">
+          <div class="stat-card">
+            <span>Last Run Duration</span>
+            <div>
+              <strong>{{ formatRunDuration(metrics.etl.lastRunMinutes) }}</strong>
+              <span>min</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span>Total Records Processed</span>
+            <strong>{{ formatMillions(metrics.etl.totalRecordsProcessed, 1) }}</strong>
+          </div>
+          <div class="stat-card">
+            <span>Records Rejected / Failed</span>
+            <strong>{{ metrics.etl.recordsRejected | number }}</strong>
+          </div>
+          <div class="stat-card">
+            <span>Last Success Time</span>
+            <div class="datetime-display" *ngIf="getDateTimeParts(metrics.etl.lastSuccess) as parts">
+              <strong class="date">{{ parts.date }}</strong>
+              <small class="time">{{ parts.time }}</small>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="panel-row two-up">
+      <section class="panel business-impact-panel">
+        <header class="panel-header">
+          <div>
+            <p class="eyebrow">Business Impact</p>
+            <h2>Value Realization</h2>
+          </div>
+        </header>
+        <div class="impact-grid">
+          <div class="impact-row two">
+            <div class="impact-item positive">
+              <span class="impact-label">Incremental Revenue</span>
+              <strong class="impact-value">
+                {{ formatBusinessCurrency(metrics.businessImpact.incrementalRevenue) }}
+              </strong>
+            </div>
+            <div class="impact-item positive">
+              <span class="impact-label">Cost Savings</span>
+              <strong class="impact-value">
+                {{ formatBusinessCurrency(metrics.businessImpact.costSavings) }}
+              </strong>
+            </div>
+          </div>
+          <div class="impact-row three">
+            <div class="impact-item neutral">
+              <span class="impact-label">ROI</span>
+              <strong class="impact-value">
+                {{ formatDecimal(metrics.businessImpact.roiPercentage) }}%
+              </strong>
+            </div>
+            <div class="impact-item neutral">
+              <span class="impact-label">Conversion Rate</span>
+              <strong class="impact-value">
+                +{{ formatDecimal(metrics.businessImpact.conversionRateLift, 1) }}$
+              </strong>
+            </div>
+            <div class="impact-item neutral">
+              <span class="impact-label">Churn Reduction</span>
+              <strong class="impact-value">
+                +{{ formatDecimal(metrics.businessImpact.churnReduction, 0) }}%
+              </strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel ai-model-panel">
+        <header class="panel-header">
+          <div>
+            <p class="eyebrow">AI Model Training</p>
+            <h2>{{ metrics.aiModel.productionModelVersion }}</h2>
+          </div>
+        </header>
+        <div class="primary-score-card">
+          <div class="score-heading">
+            <span>Primary Score</span>
+            <span class="accuracy-label">Accuracy: %{{ primaryScorePercent | number : '1.0-0' }}</span>
+          </div>
+          <div class="score-squares">
+            <span
+              class="square"
+              *ngFor="let block of scoreSegments; let i = index"
+              [class.filled]="isScoreBlockFilled(i)">
+            </span>
+          </div>
+        </div>
+        <div class="model-stats">
+          <div class="model-stat">
+            <span>Classification Accuracy</span>
+            <strong *ngIf="metrics.aiModel.accuracy as accuracyValue; else noAccuracy">
+              {{ formatDecimal(accuracyValue) }}%
+            </strong>
+            <ng-template #noAccuracy>--</ng-template>
+          </div>
+          <div class="model-stat">
+            <span>F-1 Score</span>
+            <strong *ngIf="metrics.aiModel.f1Score as f1Value; else noF1">
+              {{ formatDecimal(f1Value, 2) }}
+            </strong>
+            <ng-template #noF1>--</ng-template>
+          </div>
+          <div class="model-stat">
+            <span>Primary Score</span>
+            <strong>{{ formatPrimaryScoreValue() }}</strong>
+          </div>
+        </div>
+        <div class="training-strip">
+          <div class="etl-status-band status-purple">
+            <span>Training</span>
+          </div>
+          <div class="strip-meta">
+            <span>Duration of the last training run</span>
+            <strong>{{ metrics.aiModel.trainingTime }}</strong>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<ng-template #loadingState>
+  <div class="agent-health-loading">
+    <p>Loading agent health...</p>
+  </div>
+</ng-template>
+

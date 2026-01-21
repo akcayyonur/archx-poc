@@ -1,0 +1,396 @@
+* {
+  font-family: 'Inter', sans-serif;
+  color: #EDEAF1;
+  box-sizing: border-box;
+}
+
+.tab-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-radius: 24px;
+  background-color: #141326;
+  padding: 13px 20px 12px 20px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.section-header {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #2D2B45;
+  border-radius: 12px;
+  .section-header-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 14px 10px 9px 32px;
+    
+  }
+  
+  .section-header-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    
+    h2 {
+
+      font-weight: 500;
+      font-size: 26px;
+      line-height: 31px;
+
+
+    }
+    
+    p {
+
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 24px;
+    }
+  }
+  
+  .section-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    
+    .action-divider {
+      width: 1px;
+      height: 60px;
+      background-color: #4A5568;
+      margin: 0 8px;
+    }
+    .btn-secondary {
+
+
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 24px;
+
+
+    }
+  }
+}
+
+// Teams Section
+.teams-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.teams-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  
+  h3 {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 29px;
+    color: #FFFFFF;
+    margin: 0;
+  }
+}
+
+.btn-secondary {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 8px 16px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #EDEAF1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: transparent;
+    opacity: 0.8;
+  }
+}
+
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.teams-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.team-card {
+  background-color: #1A142A;
+  border-radius: 8px;
+  border: 1px solid #2D2B45;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  
+  .team-card-header {
+    padding: 9px 20px 4px 32px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    position: relative;
+    
+    .team-card-accent {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 20px;
+      border-top-left-radius: 8px;
+    }
+    
+    h4 {
+      font-weight: 400;
+      font-size: 32px;
+      line-height: 39px;
+    }
+  }
+  
+  .team-card-content {
+    padding: 12px 20px 16px 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+    min-height: 80px;
+    
+    .team-icon {
+      font-size: 24px;
+      color: #FFFFFF;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    
+    .team-card-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      
+      p {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        color: #FFFFFF;
+        margin: 0;
+      }
+      
+      .team-members {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        color: #EDEAF1;
+        font-style: italic;
+      }
+    }
+    
+    .team-delete-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      transition: color 0.2s ease;
+      
+      ng-icon {
+        font-size: 18px;
+      }
+      
+      &:hover {
+        color: #EF4444;
+      }
+    }
+  }
+}
+
+.add-team-btn {
+  background: #FFFFFF;
+  border: 2px solid black;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: black;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 16px 0 rgba(0,0,0,0.16);
+    transform: translateY(-2px) scale(1.02);
+  }
+  
+  span {
+    color: inherit;
+  }
+}
+
+// Users Section
+.users-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.users-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  
+  h3 {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 29px;
+    color: #FFFFFF;
+    margin: 0;
+  }
+}
+
+.users-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.add-user-btn {
+  background: #1E1C30;
+  border: 1px solid #7E68E1;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #7E68E1;
+    border-color: #7E68E1;
+  }
+  
+  span {
+    color: inherit;
+  }
+}
+
+.users-table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #2D2B45;
+  background-color: #1E1C30;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead {
+    background-color: #1E1C30;
+    
+    tr {
+      border-bottom: 1px solid #2D2B45;
+    }
+    
+    th {
+      padding: 16px 20px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 20px;
+      color: #A0AEC0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+  
+  tbody {
+    tr {
+      border-bottom: 1px solid #2D2B45;
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background-color: #252438;
+      }
+      
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+    
+    td {
+      padding: 16px 20px;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 20px;
+      color: #EDEAF1;
+    }
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  
+  &.active {
+    background-color: rgba(34, 197, 94, 0.2);
+    color: #22C55E;
+  }
+  
+  &.inactive {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #EF4444;
+  }
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  
+  .action-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #A0AEC0;
+    transition: color 0.2s ease;
+    border-radius: 4px;
+    
+    ng-icon {
+      font-size: 18px;
+    }
+    
+    &:hover {
+      color: #7E68E1;
+      background-color: rgba(126, 104, 225, 0.1);
+    }
+  }
+}

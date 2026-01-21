@@ -1,0 +1,74 @@
+<div class="page-container">
+    <div class="frame-container">
+        <img src="/images/tech_header.png" alt="Tech Header Background" class="header-background-image">
+        <header class="header-container">
+            
+            <h1 class="title">AI for Operational Excellence: The Power of Technology</h1>
+            <p class="subtitle">Empower your entire workflow—from development to deployment, and from data analysis to
+                systems management—with artificial<br>intelligence.</p>
+        </header>
+        <main class="main-container">
+            <div class="integrate-container">
+                <div class="option-container">
+                    <p class="option-title">Set up and configure your agents</p>
+                    <button class="action-button" (click)="navigateToDashboard()">MANAGE AGENTS</button>
+                </div>
+                <div class="option-container">
+                    <p class="option-title">Connect with external systems and tools</p>
+                    <button class="action-button" (click)="navigateToIntegration()">INTEGRATE AGENTS</button>
+                </div>
+                <div class="option-container">
+                    <p class="option-title">Manage profiles, roles, and permissions</p>
+                    <button class="action-button" style="padding:0; text-align: center;" (click)="navigateToPlatformSettings()">PLATFORM SETTINGS</button>
+                </div>
+            </div>
+            <div class="ai-agent-container">
+                <h2 class="explore-title">Explore AI Agents</h2>
+                <div class="ai-agent-cards-container">
+                    @for (card of aiAgentCards; track card.id) {
+                        <div class="ai-agent-card" 
+                             [class.expanded]="card.isExpanded"
+                             (click)="toggleCardExpansion(card)">
+                            
+                            <!-- Collapsed State -->
+                            @if (!card.isExpanded) {
+                                <div class="card-content">
+                                    <div class="info-icon-container">
+                                        <ng-icon [name]="card.icon" [class]="'info-icon' + (card.isEnabled ? ' enabled' : '')"></ng-icon>
+                                    </div>
+                                    <div class="card-title">{{ card.title }}</div>
+                                </div>
+                            }
+                            
+                            <!-- Expanded State -->
+                            @if (card.isExpanded) {
+                                <div class="expanded-card-content">
+                                    <div class="expanded-header">
+                                        <div class="info-icon-container">
+                                            <ng-icon [name]="card.icon" [class]="'info-icon' + (card.isEnabled ? ' enabled' : '')"></ng-icon>
+                                        </div>
+                                        <div class="expanded-text-content">
+                                            <h3 class="expanded-title">{{ card.title }}</h3>
+                                            <p class="expanded-subtitle">{{ card.subtitle }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="expanded-description">
+                                        <p>{{ card.description }}</p>
+                                    </div>
+                                    @if (card.isEnabled) {
+                                        <div class="expanded-button-container">
+                                            <button class="expanded-button" (click)="navigateToAgentHealth(card.id); $event.stopPropagation()">Agent Status</button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+            <footer class = "footer-container">
+                <video src="/images/field_footer.mp4" autoplay loop muted playsinline class="footer-image"></video>
+            </footer>
+        </main>
+    </div>
+</div>

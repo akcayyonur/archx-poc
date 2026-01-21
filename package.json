@@ -1,0 +1,76 @@
+{
+  "name": "archx-client",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "analyze": "ng build --source-map && source-map-explorer dist/archx-client/browser/*"
+  },
+  "prettier": {
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/cdk": "^20.1.2",
+    "@angular/common": "^20.1.3",
+    "@angular/compiler": "^20.1.3",
+    "@angular/core": "^20.1.3",
+    "@angular/forms": "^20.1.3",
+    "@angular/material": "^20.1.2",
+    "@angular/platform-browser": "^20.1.3",
+    "@angular/router": "^20.1.3",
+    "@fontsource/inter": "^5.2.6",
+    "@fontsource/manrope": "^5.2.6",
+    "@fontsource/material-icons": "^5.2.5",
+    "@fontsource/roboto": "^5.2.6",
+    "@fontsource/syne": "^5.2.6",
+    "@fortawesome/angular-fontawesome": "^2.0.1",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@ng-icons/core": "^32.5.0",
+    "@ng-icons/phosphor-icons": "^32.5.0",
+    "@primeuix/themes": "^1.2.2",
+    "@types/d3": "^7.4.3",
+    "@types/owl.carousel": "^2.3.6",
+    "chart.js": "^4.5.0",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "chartjs-plugin-zoom": "^2.2.0",
+    "d3": "^7.9.0",
+    "echarts": "^6.0.0",
+    "marked": "^16.2.0",
+    "ng2-charts": "^5.0.4",
+    "ngx-echarts": "^20.0.1",
+    "ngx-owl-carousel-o": "^20.0.1",
+    "owl.carousel": "^2.3.4",
+    "primeng": "^20.0.1",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.1.3",
+    "@angular/cli": "^20.1.3",
+    "@angular/compiler-cli": "^20.1.3",
+    "@types/jasmine": "~5.1.0",
+    "@types/marked": "^5.0.2",
+    "cssnano": "^7.1.1",
+    "jasmine-core": "~5.8.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "postcss": "^8.5.6",
+    "source-map-explorer": "^2.5.3",
+    "typescript": "~5.8.2"
+  }
+}

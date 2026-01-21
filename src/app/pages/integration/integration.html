@@ -1,0 +1,197 @@
+<div class="page-wrapper">
+    <app-sidebar [agents]="agents" [activeAgentId]="''"></app-sidebar>
+    <div class="content-wrapper">
+        <div class="frame-container">
+            
+            <div class="current-info-card">
+                <div class="card-icon">
+                    <ng-icon name="phosphorLink"></ng-icon>
+                </div>
+                <div class="card-content">
+                    <h2>Integrated Agents</h2>
+                    <p>View the current status of your integrated agents.</p>
+                </div>
+            </div>
+
+            <div class="integrations-grid">
+                @if (integrations.length === 0) {
+                    <div class="empty-state">
+                        <h3>No Integrations Yet</h3>
+                        <p>Create your first integration to start monitoring your systems.</p>
+                    </div>
+                } @else {
+                    <div class="integrations-list">
+                        <div class="integrations-columns">
+                            <div class="integration-column">
+                                @for (integration of integrations; track integration.integrationId; let i = $index) {
+                                    @if (i % 2 === 0) {
+                                        <ng-container *ngTemplateOutlet="cardTemplate; context: { $implicit: integration }"></ng-container>
+                                    }
+                                }
+                            </div>
+                            <div class="integration-column">
+                                @for (integration of integrations; track integration.integrationId; let i = $index) {
+                                    @if (i % 2 !== 0) {
+                                        <ng-container *ngTemplateOutlet="cardTemplate; context: { $implicit: integration }"></ng-container>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <ng-template #cardTemplate let-integration>
+                            <div class="integration-card" 
+                                 [class.expanded]="expandedItems.has(integration.integrationId)"
+                                 [class.status-error]="integration.status === 'error'"
+                                 (click)="toggleAccordion(integration.integrationId)">
+                                <div class="integration-header">
+                                    <div class="header-left">
+                                        <fa-icon [icon]="faChevronDown" class="chevron-icon"></fa-icon>
+                                        <div class="integration-info">
+                                            <h3 class="integration-name">{{ integration.agentName }}</h3>
+                                            <div class="integration-meta">
+                                                <span class="status-badge" [class]="getStatusClass(integration.status)">
+                                                    {{ integration.status }}
+                                                </span>
+                                                <span class="meta-separator">•</span>
+                                                <span class="date-text">Updated {{ formatDate(integration.updatedAt) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="header-actions">
+                                        <button class="action-button edit" 
+                                                (click)="editIntegration(integration, $event)"
+                                                title="Edit Integration">
+                                            <ng-icon name="phosphorPencilSimpleLine"></ng-icon>
+                                            
+                                        </button>
+                                        <button class="action-button delete" 
+                                                (click)="deleteIntegration(integration, $event)"
+                                                title="Delete Integration">
+                                            <ng-icon name="phosphorTrashSimple"></ng-icon>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="integration-content">
+                                    <div class="data-sources-section">
+                                        <!-- Database Connection -->
+                                        @if (integration.databaseConnection) {
+                                            <div class="data-source-card">
+                                                <div class="source-header">
+                                                    <fa-icon [icon]="faDatabase" class="source-icon"></fa-icon>
+                                                    <h4 class="source-title">Database Connection</h4>
+                                                </div>
+                                                <div class="source-details">
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Type:</span>
+                                                        <span class="detail-value db-type">{{ integration.databaseConnection.type | uppercase }}</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Host:</span>
+                                                        <span class="detail-value">{{ integration.databaseConnection.host }}</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Port:</span>
+                                                        <span class="detail-value">{{ integration.databaseConnection.port }}</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Database:</span>
+                                                        <span class="detail-value">{{ integration.databaseConnection.database }}</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Username:</span>
+                                                        <span class="detail-value">{{ integration.databaseConnection.username }}</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">SSL:</span>
+                                                        <span class="detail-value" [class.enabled]="integration.databaseConnection.ssl">
+                                                            {{ integration.databaseConnection.ssl ? 'Enabled' : 'Disabled' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        <!-- Excel Upload -->
+                                        @if (integration.excelUpload) {
+                                            <div class="data-source-card">
+                                                <div class="source-header">
+                                                    <fa-icon [icon]="faFileExcel" class="source-icon excel"></fa-icon>
+                                                    <h4 class="source-title">Excel Data Source</h4>
+                                                </div>
+                                                <div class="source-details">
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">File Name:</span>
+                                                        <span class="detail-value">{{ integration.excelUpload.fileName }}</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">File Size:</span>
+                                                        <span class="detail-value">{{ formatFileSize(integration.excelUpload.fileSize) }}</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Uploaded:</span>
+                                                        <span class="detail-value">{{ formatDate(integration.excelUpload.uploadDate) }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        <!-- Third Party Connections -->
+                                        @if (integration.thirdPartyConnections && integration.thirdPartyConnections.length > 0) {
+                                            <div class="data-source-card">
+                                                <div class="source-header">
+                                                    <fa-icon [icon]="faPlug" class="source-icon plugin"></fa-icon>
+                                                    <h4 class="source-title">Third Party Connections</h4>
+                                                </div>
+                                                <div class="third-party-list">
+                                                    @for (connection of integration.thirdPartyConnections; track connection.connectionId) {
+                                                        <div class="third-party-item">
+                                                            <div class="third-party-header">
+                                                                <span class="connection-name">{{ connection.connectionName }}</span>
+                                                            </div>
+                                                            <div class="source-details">
+                                                                <div class="detail-row">
+                                                                    <span class="detail-label">Endpoint:</span>
+                                                                    <span class="detail-value">{{ connection.connectionString }}</span>
+                                                                </div>
+                                                                @if (connection.apiKey) {
+                                                                    <div class="detail-row">
+                                                                        <span class="detail-label">API Key:</span>
+                                                                        <span class="detail-value">{{ connection.apiKey }}</span>
+                                                                    </div>
+                                                                }
+                                                                @if (connection.topologyQuery) {
+                                                                    <div class="detail-row">
+                                                                        <span class="detail-label">Topology Query:</span>
+                                                                        <span class="detail-value">{{ connection.topologyQuery }}</span>
+                                                                    </div>
+                                                                }
+                                                                @if (connection.additionalParams) {
+                                                                    @for (param of connection.additionalParams | keyvalue; track param.key) {
+                                                                        <div class="detail-row">
+                                                                            <span class="detail-label">{{ param.key }}:</span>
+                                                                            <span class="detail-value">{{ param.value }}</span>
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                    </ng-template>
+                }
+                
+                <!-- NEW INTEGRATION button -->
+                <button class="new-integration-button" routerLink="/integration/new">
+                    <fa-icon [icon]="faPlus" style="font-weight: 300;"></fa-icon> New Integration
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

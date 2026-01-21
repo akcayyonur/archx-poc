@@ -1,0 +1,100 @@
+<!-- Backdrop overlay when expanded -->
+<div class="sidebar-backdrop" [class.visible]="isExpanded" (click)="toggleSidebar()"></div>
+
+<div class="sidebar-container" [class.collapsed]="!isExpanded">
+  <!-- Navigation Items -->
+  <nav class="sidebar-nav">
+    <!-- Home Page -->
+    <div class="nav-item" (click)="navigateToHome()" data-tooltip="Home Page" [class.active]="isRouteActive('/fields/tech')">
+      <ng-icon name="phosphorHouse" class="nav-icon"></ng-icon>
+      <span class="nav-label" *ngIf="isExpanded">Home Page</span>
+    </div>
+
+    <!-- Manage Agents -->
+    <div class="nav-item expandable" [class.expanded]="isManageAgentsExpanded" [class.active]="(isRouteActive('/agents-overview') || isRouteActive('/agent-core') || isRouteActive('/agent-health'))">
+      <div class="nav-item-header" (click)="toggleManageAgents()" data-tooltip="Manage Agents">
+        <ng-icon name="phosphorAlignBottom" class="nav-icon"></ng-icon>
+        <span class="nav-label" *ngIf="isExpanded">Manage Agents</span>
+        <ng-icon 
+          *ngIf="isExpanded" 
+          name="phosphorCaretDown" 
+          class="expand-icon">
+        </ng-icon>
+      </div>
+      <div class="submenu" *ngIf="isManageAgentsExpanded && isExpanded" [@submenuAnimation]>
+        <div class="submenu-item" (click)="navigateToAgentsOverview()" [class.active]="isRouteActive('/agents-overview')">Overview</div>
+        @for (agent of agents; track agent.id) {
+          <div 
+            class="submenu-item" 
+            [class.active]="agent.id === activeAgentId"
+            (click)="navigateToAgent(agent.id)">
+            {{ agent.name }}
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Integrate Agents -->
+    <div class="nav-item" (click)="navigateToIntegration()" data-tooltip="Integrate Agents" [class.active]="isRouteActive('/integration')">
+      <ng-icon name="phosphorCirclesThreePlus" class="nav-icon"></ng-icon>
+      <span class="nav-label" *ngIf="isExpanded">Integrate Agents</span>
+    </div>
+
+    <!-- Platform Management -->
+    <div class="nav-item expandable" [class.expanded]="isPlatformManagementExpanded" [class.active]="isRouteActive('/platform-settings')">
+      <div class="nav-item-header" (click)="togglePlatformManagement()" data-tooltip="Platform Management">
+        <ng-icon name="phosphorUserSwitch" class="nav-icon"></ng-icon>
+        <span class="nav-label" *ngIf="isExpanded">Platform Management</span>
+        <ng-icon 
+          *ngIf="isExpanded" 
+          name="phosphorCaretDown" 
+          class="expand-icon">
+        </ng-icon>
+      </div>
+      <div class="submenu" *ngIf="isPlatformManagementExpanded && isExpanded" [@submenuAnimation]>
+        <div class="submenu-item" (click)="navigateToPlatformDashboard()" [class.active]="isRouteActive('/platform-settings')">Platform Dashboard</div>
+        <div class="submenu-item" (click)="navigateToUserManagement()">User Management</div>
+        <div class="submenu-item" (click)="navigateToReporting()">Reporting</div>
+        <div class="submenu-item" (click)="navigateToSecurity()">Security/KVKK</div>
+        <div class="submenu-item" (click)="navigateToCertificates()">Certificates</div>
+        <div class="submenu-item" (click)="navigateToLicence()">License</div>
+      </div>
+    </div>
+
+    <!-- Operational Insights -->
+    <div class="nav-item" (click)="navigateToOperationalInsights()" data-tooltip="Operational Insights" [class.active]="isRouteActive('/anomaly-insights')">
+      <ng-icon name="phosphorSealWarning" class="nav-icon"></ng-icon>
+      <span class="nav-label" *ngIf="isExpanded">Operational Insights</span>
+    </div>
+  </nav>
+
+  <!-- Bottom Section -->
+  <div class="sidebar-bottom">
+    <!-- User Info -->
+    <div class="user-info" *ngIf="isExpanded">
+      <ng-icon name="phosphorUserCircleDashed" class="avatar-icon"></ng-icon>
+      <div class="user-details">
+        <span class="user-name">Welcome,{{ currentUserName }}</span>
+        <span class="user-role">{{ currentUserRole }}</span>
+      </div>
+    </div>
+
+    <div class="user-info-collapsed" *ngIf="!isExpanded">
+      <ng-icon name="phosphorUserCircleDashed" class="avatar-icon"></ng-icon>
+    </div>
+
+    <!-- Log Out (only when expanded) -->
+    <div class="nav-item logout" (click)="logout()">
+      <ng-icon name="phosphorSignOut" class="nav-icon"></ng-icon>
+      <span class="nav-label">Log Out</span>
+    </div>
+
+    <!-- Hide Menu Toggle -->
+    <div class="toggle-menu" (click)="toggleSidebar()">
+      <span class="toggle-label" *ngIf="isExpanded">Hide Menu</span>
+      <div class="toggle-icon-wrapper">
+        <ng-icon [name]="isExpanded ? 'phosphorArrowCircleLeft' : 'phosphorArrowCircleRight'" class="toggle-icon"></ng-icon>
+      </div>
+    </div>
+  </div>
+</div>

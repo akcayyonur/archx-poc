@@ -1,0 +1,357 @@
+<div class="page-container">
+    <div class="frame-container">
+
+        <header class="header-container">
+            <ng-icon name="phosphorLink" style="font-size: 72px;"></ng-icon>
+            <div class="header-title-container">
+                <h1 class="page-title">
+                    {{ isEditMode ? 'Edit Integration' : 'Agent Integration Setup' }}
+                </h1>
+                <p class="page-subtitle">
+                    Configure and integrate your AIOps agents in three simple steps.
+                </p>
+            </div>
+
+        </header>
+        <div class="stepper-container">
+            <div class="step-bar big" [class.active]="currentStep >= 1"></div>
+            <div class="step-bar small" [class.active]="currentStep >= 2"></div>
+            <div class="step-bar medium" [class.active]="currentStep >= 2"></div>
+            <div class="step-bar small" [class.active]="currentStep >= 2"></div>
+            <div class="step-bar big" [class.active]="currentStep >= 2"></div>
+            <div class="step-bar small" [class.active]="currentStep >= 3"></div>
+            <div class="step-bar medium" [class.active]="currentStep >= 3"></div>
+            <div class="step-bar small" [class.active]="currentStep >= 3"></div>
+            <div class="step-bar big" [class.active]="currentStep >= 3"></div>
+        </div>
+
+        <!-- Step Content -->
+        <div class="content-container">
+            <!-- Step 1: Upload License Key -->
+            @if (currentStep === 1) {
+
+            <div class="select-agent-container">
+                <h3 class="select-agent-title">Step 1: Select an Agent</h3>
+                <p class="select-agent-description">Choose the agent/s you want to integrate with your system</p>
+
+                <div class="cards-wrapper">
+                    <button type="button" class="chevron left" (click)="prevAgents()" [disabled]="!canGoPrev()"
+                        [attr.aria-disabled]="!canGoPrev()">
+                        <fa-icon [icon]="faChevronLeft"></fa-icon>
+                    </button>
+                    <div class="cards-container">
+                        @for (agent of paginatedAgents; track agent.agentId; let i = $index) {
+                        <div class="card" [class.selected]="selectedAgentId === agent.agentId"
+                            (click)="selectAgent(agent.agentId)">
+                            <div class="card-content-wrapper">
+                                <div class="card-icon">
+                                    <ng-icon [name]="getAgentIcon(agent.agentId)"></ng-icon>
+                                </div>
+                                <div class="card-info">
+                                    <h3 class="card-title">{{ agent.agentName }}</h3>
+                                    <div class="card-requirements">
+                                        @if (agent.requiresDatabase) {
+                                        <span class="req-text">Requires: Database</span>
+                                        } @else if (agent.requiresExcel) {
+                                        <span class="req-text">Requires: Excel Import</span>
+                                        } @else if (agent.requiresThirdParty) {
+                                        <span class="req-text">Requires: 3rd Party</span>
+                                        } @else {
+                                        <span class="req-text">No Requirements</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    <button type="button" class="chevron right" (click)="nextAgents()" [disabled]="!canGoNext()"
+                        [attr.aria-disabled]="!canGoNext()">
+                        <fa-icon [icon]="faChevronRight"></fa-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="step1-content">
+                <div class="step-content-header">
+                    <h2 class="step-title">{{ getStepTitle() }}</h2>
+                    <p class="step-description">Select and upload your agent license file to activate the agent.
+                    </p>
+
+                </div>
+                <div class="upload-area license-upload" [class.has-file]="!!licenseFile"
+                    (click)="licenseFile ? null : licenseFileInput.click()">
+                    @if (!licenseFile) {
+                    <div class="upload-placeholder">
+                        <fa-icon [icon]="faUpload" class="upload-icon"></fa-icon>
+                        <p class="upload-text">Choose a file or drag and drop</p>
+                        <p class="upload-subtext">Supports .lic, .key, .txt files</p>
+                    </div>
+                    } @else {
+                        <div class="uploaded-file license-file">
+                        <fa-icon [icon]="faUpload" class="file-icon"></fa-icon>
+                        <div class="file-info">
+                            <div class="file-header">
+                                <p class="file-name">{{ licenseFileName }}</p>
+                                <button type="button" class="progress-remove-btn" (click)="removeLicenseFile()" aria-label="Remove license file">
+                                    <fa-icon [icon]="faTrash"></fa-icon>
+                                </button>
+                            </div>
+                            <span class="progress-status">
+                                {{ licenseIsUploading 
+                                    ? 'Uploading license...' 
+                                    : (licenseFile ? (licenseFile.size / 1024).toFixed(1) + ' KB' : '') }}
+                            </span>
+                        <div class="upload-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="licenseUploadProgress"
+                                    aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-fill" [style.width.%]="licenseUploadProgress">
+                                        <span class="progress-label">{{ licenseUploadProgress | number:'1.0-0' }}%</span>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+                <input #licenseFileInput type="file" accept=".lic,.key,.txt" (change)="onLicenseFileSelected($event)"
+                    style="display: none;">
+                <div class="navigation-buttons" style="margin-top: 32px;">
+                    <button class="nav-button back" (click)="previousStep()">
+                        <fa-icon [icon]="faChevronLeft"></fa-icon>
+                        {{ currentStep === 1 ? 'Cancel' : 'Back' }}
+                    </button>
+
+                    <button class="nav-button continue" (click)="nextStep()"
+                        [disabled]="(currentStep === 1 && !canProceedFromStep1())">
+                        Next
+                        <fa-icon [icon]="faChevronRight"></fa-icon>
+                    </button>
+                </div>
+            </div>
+            }
+
+            <!-- Step 2: Configure Data Source -->
+            @if (currentStep === 2) {
+                <div class="step-content step2-content">
+                    <div class="step2-header">
+                        <h2 class="step-title">Step 2: Configure Agent</h2>
+                        <p class="step2-subtitle">
+                            Select your database type and enter the connection string
+                        </p>
+                    </div>
+
+                    @if (agentRequirements?.requiresDatabase) {
+                    <div class="agent-config-card">
+                        <div class="config-panels">
+                            <div class="db-selection-panel">
+                                <div class="db-types-grid step2-db-grid">
+                                    @for (type of databaseTypes; track type) {
+                                    <button class="db-type-button" [class.selected]="selectedDatabaseType === type"
+                                        (click)="selectDatabaseType(type)">
+                                        <div class="db-icon-container">
+                                            <img [src]="'images/' + getDatabaseImage(type)" [alt]="getDatabaseDisplayName(type)" class="db-logo-img">
+                                        </div>
+                                    </button>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="connection-panel">
+                                @if (selectedDatabaseType) {
+                                <div class="connection-form step2-connection-form">
+                                    <div class="form-grid step2-form-grid">
+                                        <div class="form-group">
+                                            <input type="text" class="form-input" [(ngModel)]="databaseConnection.host"
+                                                placeholder="e.g., localhost" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="number" class="form-input" [(ngModel)]="databaseConnection.port" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="text" class="form-input" [(ngModel)]="databaseConnection.database"
+                                                placeholder="e.g., proddb" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="text" class="form-input" [(ngModel)]="databaseConnection.username"
+                                                placeholder="e.g., dbadmin" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="password" class="form-input" [(ngModel)]="databaseConnection.password"
+                                                placeholder="Password" required>
+                                        </div>
+
+                                        <div class="form-group checkbox-group">
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" [(ngModel)]="databaseConnection.ssl">
+                                                <span>Enable SSL Connection</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                } @else {
+                                <div class="connection-placeholder">
+                                    Select a database type to configure its connection details.
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="step2-actions">
+                        <button class="step2-action-button" (click)="previousStep()">
+                            <fa-icon [icon]="faChevronLeft"></fa-icon>
+                            Previous
+                        </button>
+
+                        <button class="step2-action-button align-right" type="button">
+                            <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:1px solid currentColor;border-radius:50%;"><ng-icon name="phosphorCheck"></ng-icon></span>
+                            Test Connection
+                        </button>
+
+                        <button class="step2-action-button primary" (click)="nextStep()" [disabled]="!canProceedFromStep2()">
+                            Next
+                            <fa-icon [icon]="faChevronRight"></fa-icon>
+                        </button>
+                    </div>
+                    } @else {
+                    <div class="no-connections step2-empty-state">
+                        <p>This agent does not require a database connection.</p>
+                    </div>
+                    }
+                </div>
+            }
+
+            <!-- Step 3: Third-Party Integrations -->
+            @if (currentStep === 3) {
+                <div class="step-content step3-content">
+                    <div class="step3-header">
+                        <h2 class="step-title">Step 3: Third-Party Integrations</h2>
+                        <p class="step-description">
+                            Configure any required third-party connections.
+                        </p>
+                    </div>
+                    <hr class="horizontal-divider" style="width: 100%;font-weight: 300;color: rgba(255,255,255,0.11);"/>
+                    @if (agentRequirements?.requiresThirdParty && agentRequirements?.thirdPartyConnections) {
+                    <div class="cmdb-connection-section">
+                        <div class="cmdb-header">
+                            <ng-icon name="phosphorFileText" class="cmdb-icon"></ng-icon>
+                            <div class="cmdb-info">
+                                <h4 class="cmdb-title">CMDB Connection</h4>
+                                <p class="cmdb-subtitle">Configuration management database connection for asset and dependency mapping.</p>
+                            </div>
+                        </div>
+
+                        <div class="cmdb-form">
+                            @if (thirdPartyConnections.length > 0) {
+                            <div class="form-group">
+                                <div class="inline-field">
+                                    <span class="inline-field-label">CMDB API Endpoint</span>
+                                    <input type="text" class="form-input inline-field-input"
+                                        [(ngModel)]="thirdPartyConnections[0].connectionString"
+                                        placeholder="e.g., https://cmdb.company.com/api" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="inline-field">
+                                    <span class="inline-field-label">API Key</span>
+                                    <input type="text" class="form-input inline-field-input"
+                                        [(ngModel)]="thirdPartyConnections[0].apiKey"
+                                        placeholder="enter your API key">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="inline-field">
+                                    <span class="inline-field-label">Topology Query (Service Model)</span>
+                                    <input type="text" class="form-input inline-field-input"
+                                        [(ngModel)]="thirdPartyConnections[0].topologyQuery"
+                                        placeholder="enter topology query">
+                                </div>
+                            </div>
+                            } @else {
+                            <div class="form-group">
+                                <div class="inline-field">
+                                    <span class="inline-field-label">CMDB API Endpoint</span>
+                                    <input type="text" class="form-input inline-field-input"
+                                        placeholder="e.g., https://cmdb.company.com/api" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="inline-field">
+                                    <span class="inline-field-label">API Key</span>
+                                    <input type="text" class="form-input inline-field-input"
+                                        placeholder="enter your API key">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="inline-field">
+                                    <span class="inline-field-label">Topology Query (Service Model)</span>
+                                    <input type="text" class="form-input inline-field-input"
+                                        placeholder="enter topology query">
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    } @else {
+                    <div class="no-connections">
+                        <p>No third-party connections required for this agent.</p>
+                    </div>
+                    }
+
+                    <div class="navigation-buttons">
+                        <button class="nav-button back" (click)="previousStep()">
+                            <fa-icon style="font-size: 16px; font-weight: 300;" [icon]="faChevronLeft"></fa-icon>
+                            Previous
+                        </button>
+                        
+                        <button class="nav-button continue" 
+                                (click)="onStep3Save()"
+                                [disabled]="!canProceedFromStep3()">
+                            {{ isEditMode ? 'Update' : 'Save' }}
+                            <fa-icon style="font-size: 16px; font-weight: 300;" [icon]="faChevronRight"></fa-icon>
+                        </button>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <!-- Confirmation Popup -->
+    @if (showConfirmPopup) {
+    <div class="popup-overlay" (click)="closePopup()">
+        <div class="popup-container" (click)="$event.stopPropagation()">
+            <h2 class="popup-title">{{ isEditMode ? 'Update Integration' : 'Confirm Integration' }}</h2>
+            <p class="popup-text">{{ isEditMode ? 'Update this integration?' : 'Save this integration configuration?' }}
+            </p>
+
+            @if (error) {
+            <div class="error-message">{{ error }}</div>
+            }
+
+            <div class="popup-actions">
+                <button class="popup-button cancel" (click)="closePopup()" [disabled]="loading">
+                    Cancel
+                </button>
+                <button class="popup-button confirm" (click)="confirmAndSave()" [disabled]="loading">
+                    @if (loading) {
+                    Saving...
+                    } @else {
+                    {{ isEditMode ? 'Update' : 'Confirm' }}
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+</div>

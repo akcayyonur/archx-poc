@@ -1,0 +1,212 @@
+<div class="page-container">
+    <app-sidebar></app-sidebar>
+
+    <div class="content-container">
+        <button class="back-button" (click)="navigateToOperationalInsights()">
+            <ng-icon name="phosphorCaretLeft"></ng-icon>
+            Back to Operational Insights
+        </button>
+        <main class="main-content">
+            <header class="main-content-header">
+                <div class="header-icon-wrapper">
+                    <ng-icon name="phosphorMagnifyingGlassBold"></ng-icon>
+                    <ng-icon name="phosphorCube" class="overlay-icon"></ng-icon>
+                </div>
+                <div class="main-content-header-title">
+                    <h1>Entity Insights</h1>
+                    <p>Review anomalies, metrics, and historical patterns for this entity.</p>
+                </div>
+                <div class="date-picker-shell">
+                <div class="picker-field">
+                  <label for="startDate">From</label>
+                  <p-datepicker
+                    inputId="startDate"
+                    name="startDate"
+                    [(ngModel)]="dateRange.start"
+                    [ngModelOptions]="{ standalone: true }"
+                    [showTime]="true"
+                    hourFormat="24"
+                    [showIcon]="false"
+                    panelStyleClass="agent-date-panel"
+                    dateFormat="dd.mm.yy"
+                    placeholder="Select start">
+                  </p-datepicker>
+                </div>
+                <div class="picker-field">
+                  <label for="endDate">To</label>
+                  <p-datepicker
+                    inputId="endDate"
+                    name="endDate"
+                    [(ngModel)]="dateRange.end"
+                    [ngModelOptions]="{ standalone: true }"
+                    [showTime]="true"
+                    hourFormat="24"
+                    [showIcon]="false"
+                    panelStyleClass="agent-date-panel"
+                    dateFormat="dd.mm.yy"
+                    placeholder="Select end">
+                  </p-datepicker>
+                </div>
+              </div>
+            </header>
+            
+            <div class="main-content-body">
+                <!-- Summary Card -->
+                <div class="summary-card">
+                    <div class="summary-info">
+                        <div class="summary-header">
+                            <span class="bullet">&bull;</span>
+                            <span>50 message clusters, 38 metrics</span>
+                        </div>
+                        <div class="entity-name">
+                            <span class="dot-blue"></span>
+                            <h2>{{ entityId || 'Loading...' }}</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="status-group">
+                        <span class="status-text">Active</span>
+                        <div class="badge badge-critical">Critical</div>
+                    </div>
+
+                    <div class="timeline-visual">
+                        <div class="timeline-labels">
+                            <span>08:40</span>
+                            <span>12:00</span>
+                        </div>
+                        <div class="timeline-bar">
+                            <div class="dash"></div>
+                            <div class="dash"></div>
+                            <div class="dash"></div>
+                            <div class="dash active"></div>
+                            <div class="dash active"></div>
+                            <div class="dash active"></div>
+                            <div class="dash active"></div>
+                            <div class="dash"></div>
+                            <div class="dash"></div>
+                            <div class="dash"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Grid: 2 Columns -->
+                <div class="content-grid">
+                    <!-- Left Column: Metrics + Chart -->
+                    <div class="left-column">
+                        <div class="metrics-list">
+                            @for (metric of metrics; track metric.name) {
+                                <div class="metric-card">
+                                    <div class="metric-header">
+                                        <h3>{{ metric.name }}</h3>
+                                    </div>
+                                    <div class="metric-body">
+                                        <div class="metric-main">
+                                            <span class="metric-value">{{ metric.value }}</span>
+                                            <div class="metric-sub">
+                                                @if (metric.subLabel) {
+                                                    <span class="sub-label">{{ metric.subLabel }}</span>
+                                                }
+                                                <span class="sub-value">{{ metric.subValue }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-footer">
+                                        <div class="last-collected">Last collected {{ metric.lastCollected }}</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="chart-section">
+                            <h3>Anomaly Trend Over Time</h3>
+                            <div class="chart-container">
+                                <div class="y-axis">
+                                    <span>Critical</span>
+                                    <span>High</span>
+                                    <span>Moderate</span>
+                                    <span>Idle</span>
+                                </div>
+                                <div class="chart-area">
+                                    <!-- Horizontal Grid Lines -->
+                                    <div class="grid-line" style="bottom: 90%"></div>
+                                    <div class="grid-line" style="bottom: 65%"></div>
+                                    <div class="grid-line" style="bottom: 40%"></div>
+                                    <div class="grid-line" style="bottom: 15%"></div>
+
+                                    <!-- X Axis Line -->
+                                    <div class="x-axis-line"></div>
+
+                                    <!-- Points -->
+                                    @for (point of chartPoints; track point.time) {
+                                        <div class="chart-point-wrapper" [style.left.%]="$index * 14 + 10">
+                                            <div class="dashed-line" 
+                                                 [style.height.%]="point.level === 'Critical' ? 90 : point.level === 'High' ? 65 : point.level === 'Moderate' ? 40 : 15"
+                                                 [style.border-color]="point.color"></div>
+                                            <div class="point-dot" 
+                                                 [style.bottom.%]="point.level === 'Critical' ? 90 : point.level === 'High' ? 65 : point.level === 'Moderate' ? 40 : 15"
+                                                 [style.background-color]="point.color"></div>
+                                            <div class="x-label">{{ point.time }}</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Anomalies + Recurring -->
+                    <div class="right-column">
+                        <!-- Anomalies List -->
+                        <div class="anomalies-card">
+                            <h3>Anomalies</h3>
+                            <div class="table-header">
+                                <div class="col-name">Anomaly Name</div>
+                                <div class="col-status">Status</div>
+                                <div class="col-team">Team</div>
+                                <div class="col-app">Application</div>
+                                <div class="col-date">anomaly.date</div>
+                            </div>
+                            <div class="table-body">
+                                @for (anomaly of anomalies; track $index) {
+                                    <div class="table-row">
+                                        <div class="col-name">{{ anomaly.name }}</div>
+                                        <div class="col-status">
+                                            <span class="status-badge" [ngClass]="anomaly.status.toLowerCase()">
+                                                {{ anomaly.status }}
+                                            </span>
+                                        </div>
+                                        <div class="col-team">{{ anomaly.team }}</div>
+                                        <div class="col-app">{{ anomaly.application }}</div>
+                                        <div class="col-date">anomaly.date</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Recurring Anomalies -->
+                        <div class="recurring-card">
+                            <h3>Recurring Anomalies</h3>
+                            <div class="recurring-list">
+                                @for (item of recurringAnomalies; track $index) {
+                                    <div class="recurring-row">
+                                        <div class="rec-name">{{ item.name }}</div>
+                                        <div class="rec-trend">
+                                            Trend: 
+                                            <i [class]="item.trend === 'up' ? 'ph-trend-up' : 'ph-trend-down'" 
+                                               [style.color]="item.trend === 'up' ? '#FF6B6B' : '#C8E972'"></i>
+                                        </div>
+                                        <div class="rec-count">Occured <span class="highlight">{{ item.count }} times</span> {{ item.timeframe }}</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="forward-button">
+                    <i class="ph-share-fat"></i>
+                    Forward Anomaly
+                </button>
+            </div>
+        </main>
+    </div>
+</div>

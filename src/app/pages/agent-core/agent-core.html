@@ -1,0 +1,308 @@
+<div class="page-wrapper">
+  <app-sidebar [agents]="agents" [activeAgentId]="agentId"></app-sidebar>
+  
+  @if (agent) {
+    <div class="content-wrapper">
+      <div class="header-section">
+        <div class="header-content">
+          <div>
+            <h1 class="page-title">Root Cause Analysis</h1>
+            <p class="page-subtitle">{{ agent.name }} - Anomaly Detection Dashboard</p>
+          </div>
+          <div class="header-actions">
+            <button class="action-button" (click)="navigateToHealth()">
+              <ng-icon name="phosphorHeart"></ng-icon>
+              Health Check
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Date Range Controls -->
+      <div class="controls-section">
+        <div class="date-range-selector">
+          <div class="date-input-group">
+            <label>From:</label>
+            <input type="datetime-local" 
+                   [(ngModel)]="startDateString" 
+                   class="date-input">
+          </div>
+          <div class="date-input-group">
+            <label>To:</label>
+            <input type="datetime-local" 
+                   [(ngModel)]="endDateString" 
+                   class="date-input">
+          </div>
+          <button class="refresh-button" (click)="loadAnomalies()">
+            <ng-icon name="phosphorArrowClockwise"></ng-icon>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Anomalies Section -->
+      <div class="anomalies-section">
+        <div class="section-header">
+          <h2 class="section-title">Anomalies</h2>
+          <div class="anomaly-count">
+            <span class="count-badge">{{ filteredAnomalies.length }}</span>
+            <span class="count-label">detected anomalies</span>
+          </div>
+        </div>
+
+        <!-- Anomalies Table -->
+        <div class="anomalies-table-container">
+          <table class="anomalies-table">
+            <thead>
+              <tr>
+                <th class="col-anomaly">
+                  <div class="th-content">
+                    <span>Anomaly</span>
+                    <input type="text" 
+                           class="filter-input" 
+                           placeholder="Filter" 
+                           [(ngModel)]="anomalyFilter"
+                           (ngModelChange)="onAnomalyFilterChange()">
+                  </div>
+                </th>
+                <th class="col-entity">
+                  <div class="th-content">
+                    <span>Entity</span>
+                    <input type="text" 
+                           class="filter-input" 
+                           placeholder="Filter" 
+                           [(ngModel)]="entityFilter"
+                           (ngModelChange)="onEntityFilterChange()">
+                  </div>
+                </th>
+                <th class="col-severity">Severity</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (filteredAnomalies.length === 0) {
+                <tr class="empty-row">
+                  <td colspan="3" class="empty-cell">
+                    <div class="empty-state">
+                      <ng-icon name="phosphorMagnifyingGlass"></ng-icon>
+                      <p>No anomalies found</p>
+                    </div>
+                  </td>
+                </tr>
+              }
+              @for (anomaly of filteredAnomalies; track anomaly.id) {
+                <tr class="anomaly-row" (click)="selectAnomaly(anomaly)">
+                  <td class="col-anomaly">
+                    <div class="anomaly-content">
+                      @for (metric of anomaly.metrics; track metric) {
+                        <div class="metric-tag">{{ metric }}</div>
+                      }
+                    </div>
+                  </td>
+                  <td class="col-entity">
+                    <div class="entity-content">
+                      <span class="entity-name">{{ anomaly.entity }}</span>
+                      <span class="entity-time">{{ formatDate(anomaly.timestamp) }}</span>
+                    </div>
+                  </td>
+                  <td class="col-severity">
+                    <div class="severity-indicator" [style.background-color]="getSeverityColor(anomaly.severity)"></div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Panel (Full Page Grid) -->
+    @if (showDetailPanel && selectedAnomaly) {
+      <div class="detail-panel-overlay" (click)="closeDetailPanel()"></div>
+      <div class="detail-panel-fullscreen" [class.show]="showDetailPanel">
+        <div class="detail-header">
+          <div class="detail-header-left">
+            <h2 class="detail-title">Anomaly Analysis - {{ selectedAnomaly.entity }}</h2>
+            <div class="detail-meta">
+              <div class="severity-badge-small" [style.background-color]="getSeverityColor(selectedAnomaly.severity)">
+                {{ getSeverityLabel(selectedAnomaly.severity) }}
+              </div>
+              <span class="detail-timestamp">{{ formatDate(selectedAnomaly.timestamp) }}</span>
+            </div>
+          </div>
+          <button class="close-button" (click)="closeDetailPanel()">
+            <ng-icon name="phosphorX"></ng-icon>
+          </button>
+        </div>
+
+        <div class="detail-grid">
+          <!-- AI Insights & Recommendations -->
+          <div class="detail-card">
+            <div class="detail-card-header">
+              <div class="header-left">
+                <ng-icon name="phosphorBrain"></ng-icon>
+                <h3>AI Insights & Recommendations</h3>
+              </div>
+            </div>
+            <div class="detail-card-content">
+              <div class="insight-section" [class.expanded]="expandedDetailSection === 'summary'">
+                <div class="insight-header" (click)="toggleDetailSection('summary')">
+                  <span>Executive Summary</span>
+                  <ng-icon [name]="expandedDetailSection === 'summary' ? 'phosphorCaretUp' : 'phosphorCaretDown'"></ng-icon>
+                </div>
+                @if (expandedDetailSection === 'summary') {
+                  <div class="insight-content">
+                    <p>The detected anomaly shows {{ selectedAnomaly.severity }} severity in the system monitoring metrics. This indicates potential performance degradation that requires immediate attention.</p>
+                  </div>
+                }
+              </div>
+
+              <div class="insight-section" [class.expanded]="expandedDetailSection === 'analysis'">
+                <div class="insight-header" (click)="toggleDetailSection('analysis')">
+                  <span>Anomaly Analysis</span>
+                  <ng-icon [name]="expandedDetailSection === 'analysis' ? 'phosphorCaretUp' : 'phosphorCaretDown'"></ng-icon>
+                </div>
+                @if (expandedDetailSection === 'analysis') {
+                  <div class="insight-content">
+                    <p>Multiple metrics affected including response time, throughput, and error rate. The anomaly correlates with {{ selectedAnomaly.duration }} of sustained performance issues.</p>
+                  </div>
+                }
+              </div>
+
+              <div class="insight-section" [class.expanded]="expandedDetailSection === 'pathway'">
+                <div class="insight-header" (click)="toggleDetailSection('pathway')">
+                  <span>Causal Pathway Analysis</span>
+                  <ng-icon [name]="expandedDetailSection === 'pathway' ? 'phosphorCaretUp' : 'phosphorCaretDown'"></ng-icon>
+                </div>
+                @if (expandedDetailSection === 'pathway') {
+                  <div class="insight-content">
+                    <p>Root cause likely stems from infrastructure performance degradation affecting the service layer. Recommended investigation path:</p>
+                    <ul>
+                      <li>Check server resource utilization</li>
+                      <li>Review network latency metrics</li>
+                      <li>Analyze recent configuration changes</li>
+                    </ul>
+                  </div>
+                }
+              </div>
+
+              <div class="insight-section" [class.expanded]="expandedDetailSection === 'impact'">
+                <div class="insight-header" (click)="toggleDetailSection('impact')">
+                  <span>Business Impact Assessment</span>
+                  <ng-icon [name]="expandedDetailSection === 'impact' ? 'phosphorCaretUp' : 'phosphorCaretDown'"></ng-icon>
+                </div>
+                @if (expandedDetailSection === 'impact') {
+                  <div class="insight-content">
+                    <p>Estimated business impact: Potential revenue loss due to degraded user experience. Customer retention may be affected if not resolved within 24 hours.</p>
+                  </div>
+                }
+              </div>
+
+              <div class="insight-section" [class.expanded]="expandedDetailSection === 'recommendations'">
+                <div class="insight-header" (click)="toggleDetailSection('recommendations')">
+                  <span>Recommendations</span>
+                  <ng-icon [name]="expandedDetailSection === 'recommendations' ? 'phosphorCaretUp' : 'phosphorCaretDown'"></ng-icon>
+                </div>
+                @if (expandedDetailSection === 'recommendations') {
+                  <div class="insight-content">
+                    <p>Immediate actions:</p>
+                    <ul>
+                      <li>Scale up server resources</li>
+                      <li>Review and optimize database queries</li>
+                      <li>Implement caching layer if not present</li>
+                      <li>Schedule emergency maintenance window</li>
+                    </ul>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Business Service Model -->
+          <div class="detail-card">
+            <div class="detail-card-header">
+              <div class="header-left">
+                <ng-icon name="phosphorNetwork"></ng-icon>
+                <h3>Causal Root Cause DAG</h3>
+              </div>
+            </div>
+            <div class="detail-card-content service-model">
+              <div class="dag-diagram">
+                <div class="dag-layer">
+                  <div class="dag-node root" style="background: linear-gradient(135deg, #d73a49 0%, #c92a2a 100%);">
+                    <ng-icon name="phosphorCpu"></ng-icon>
+                    <span>Resource Exhaustion</span>
+                  </div>
+                </div>
+                <div class="dag-arrow-down"></div>
+                <div class="dag-layer">
+                  <div class="dag-node">
+                    <ng-icon name="phosphorHardDrives"></ng-icon>
+                    <span>Server Performance</span>
+                  </div>
+                  <div class="dag-node">
+                    <ng-icon name="phosphorDatabase"></ng-icon>
+                    <span>Database Query</span>
+                  </div>
+                </div>
+                <div class="dag-arrow-down"></div>
+                <div class="dag-layer">
+                  <div class="dag-node" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+                    <ng-icon name="phosphorClock"></ng-icon>
+                    <span>Response Time</span>
+                  </div>
+                </div>
+                <div class="dag-arrow-down"></div>
+                <div class="dag-layer">
+                  <div class="dag-node consequence" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                    <ng-icon name="phosphorWarning"></ng-icon>
+                    <span>{{ selectedAnomaly.entity }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Correlation Analysis -->
+          <div class="detail-card">
+            <div class="detail-card-header">
+              <div class="header-left">
+                <ng-icon name="phosphorGraph"></ng-icon>
+                <h3>Correlation Analysis</h3>
+              </div>
+            </div>
+            <div class="detail-card-content chart-content">
+              <canvas baseChart
+                [data]="correlationChartData"
+                [options]="correlationChartOptions"
+                [type]="'line'">
+              </canvas>
+            </div>
+          </div>
+
+          <!-- Service Response Time Trend -->
+          <div class="detail-card">
+            <div class="detail-card-header">
+              <div class="header-left">
+                <ng-icon name="phosphorPulse"></ng-icon>
+                <h3>Service Response Time Trend</h3>
+              </div>
+              <div class="time-range-buttons">
+                <button class="time-btn" [class.active]="trendTimeRange === '6h'" (click)="setTrendTimeRange('6h')">6h</button>
+                <button class="time-btn" [class.active]="trendTimeRange === '12h'" (click)="setTrendTimeRange('12h')">12h</button>
+                <button class="time-btn" [class.active]="trendTimeRange === '24h'" (click)="setTrendTimeRange('24h')">24h</button>
+              </div>
+            </div>
+            <div class="detail-card-content chart-content">
+              <canvas baseChart
+                [data]="trendChartData"
+                [options]="trendChartOptions"
+                [type]="'line'">
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
+

@@ -1,0 +1,398 @@
+.sidebar-container {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 270px;
+  height: calc(100vh - 17px);
+  background: #1E1B2E;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  margin: 9px 0px 0px 13px;
+  border-radius: 12px;
+  transition: width 0.3s ease;
+  overflow: hidden;
+
+  &.collapsed {
+    width: 74px;
+
+    .nav-label {
+      opacity: 0;
+      width: 0;
+    }
+
+    .expand-icon {
+      opacity: 0;
+      width: 0;
+    }
+
+    .submenu {
+      display: none;
+    }
+
+    .nav-item,
+    .nav-item-header {
+      justify-content: center;
+      padding-left: 0;
+      padding-right: 0;
+      gap: 0;
+    }
+  }
+}
+
+// Navigation
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(164, 15, 252, 0.3);
+    border-radius: 2px;
+  }
+}
+
+// Override alignment when collapsed
+.collapsed .sidebar-nav {
+  align-items: center;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 17px;
+  gap: 12px;
+  position: relative;
+  border-radius: 8px;
+  width: 100%;
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  &.active {
+    background: rgba(201, 178, 234, 0.36);
+    color: #BDA5E6;
+    
+    .nav-icon, .nav-label {
+      color: #BDA5E6;
+    }
+
+    &.expandable {
+      background: transparent;
+      color: inherit;
+      
+      .nav-item-header {
+        background: rgba(201, 178, 234, 0.36);
+        color: #BDA5E6;
+        
+        .nav-icon, .nav-label {
+          color: #BDA5E6;
+        }
+      }
+    }
+  }
+
+  &.expandable {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+
+    .nav-item-header {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-radius: 8px;
+      
+    }
+
+    .submenu {
+      overflow: hidden;
+      margin-left: 33px;
+      border-left: 1px solid rgba(237, 234, 241, 0.26);
+    }
+  }
+
+  &.logout {
+    color: #EDEAF1;
+    padding: 12px 0;
+    align-items: center;
+    &:hover {
+      background: transparent;
+      color: rgba(237, 234, 241, 0.8);
+    }
+  }
+}
+
+.nav-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-label {
+  white-space: wrap;
+  transition: opacity 0.3s ease, width 0.3s ease;
+  flex: 1;
+}
+
+.expand-icon {
+  font-size: 16px;
+  margin-left: auto;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+
+
+.submenu-item {
+  padding: 10px 20px 10px 52px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: rgba(237, 234, 241, 0.8);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 17px;
+  border-end-end-radius: 8px;
+  border-start-end-radius: 8px;
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #EDEAF1;
+  }
+
+  &.active {
+    background: rgba(255, 255, 255, 0.36);
+    color: #EDEAF1;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3px;
+      height: 100%;
+      background: #EDEAF1;
+    }
+  }
+}
+
+// Bottom Section
+.sidebar-bottom {
+  padding: 16px 20px;
+  margin-bottom: 90px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  margin-bottom: 8px;
+}
+
+.user-info-collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+  margin-bottom: 8px;
+}
+
+.avatar-icon {
+  font-size: 28px;
+  color: #EDEAF1;
+  flex-shrink: 0;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-name {
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role {
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 17px;
+}
+
+.settings-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+
+  &:hover {
+    .icon {
+      color: #A40FFC;
+    }
+  }
+
+  .icon {
+    font-size: 30px;
+    color: #EDEAF1;
+    transition: color 0.2s ease;
+  }
+}
+
+// Toggle Menu
+.toggle-menu {
+  display: flex;
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  right: 31px;
+  border-end-end-radius: 25px;
+  border-start-end-radius: 25px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 9px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 17px;
+  color: #070508;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 8px;
+  background-color: #EDEAF1;
+}
+
+.toggle-label {
+  white-space: nowrap;
+}
+
+.toggle-icon-wrapper {
+  margin-right: 10px;
+  width: 28px;
+  height: 28px;
+  background: #EDEAF1;
+  border: 1px solid #EDEAF1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.toggle-icon {
+  font-size: 28px;
+  color: #1E1B2E;
+  transition: color 0.2s ease;
+}
+
+// Collapsed state adjustments
+.collapsed {
+  .toggle-menu {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .toggle-label {
+    display: none;
+  }
+}
+
+// Backdrop blur overlay when expanded
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// Tooltip implementation for collapsed state
+.sidebar-container.collapsed {
+  overflow: visible;
+
+  .sidebar-nav {
+    overflow: visible;
+  }
+
+  .nav-item, 
+  .nav-item-header, 
+  .settings-icon {
+    &[data-tooltip] {
+      position: relative;
+      
+      &:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        left: calc(100% + 15px);
+        top: 50%;
+        transform: translateY(-50%);
+        background: #1E1B2E;
+        color: #EDEAF1;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+        z-index: 2000;
+        pointer-events: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        opacity: 0;
+        animation: tooltipFadeIn 0.2s ease forwards;
+      }
+    }
+  }
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}

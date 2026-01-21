@@ -1,0 +1,39 @@
+<div class="config-navbar">
+    <nav class="navbar-container">
+        <button class="nav-button" routerLink="/dashboard" routerLinkActive="active">
+            <mat-icon class="nav-icon">dashboard</mat-icon>
+        </button>
+        <button class="nav-button" routerLink="/integration" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+            <mat-icon class="nav-icon">folder_managed</mat-icon>
+        </button>
+        <button class="nav-button" >
+            <mat-icon class="nav-icon">cast_warning</mat-icon>
+        </button>
+        <button class="nav-button" routerLink="/analytics" routerLinkActive="active">
+            <mat-icon class="nav-icon">bar_chart</mat-icon>
+        </button>
+    </nav>
+    <div class="user-container">
+        <button class="notification-button">
+            <img src="/images/notification.svg" alt="notifications">
+        </button>
+        <div class="divider"></div>
+        <div class="account-dropdown">
+            <button class="account-button" (click)="toggleDropdown()">
+                <mat-icon>person</mat-icon>
+                <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+            <div class="dropdown-menu" [class.show]="isDropdownOpen">
+                <button class="dropdown-item" (click)="onUserSettings()">
+                    <mat-icon>settings</mat-icon>
+                    <span>User Settings</span>
+                </button>
+                <button class="dropdown-item" (click)="onLogout()">
+                    <mat-icon>exit_to_app</mat-icon>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

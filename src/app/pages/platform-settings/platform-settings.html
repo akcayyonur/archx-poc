@@ -1,0 +1,26 @@
+<div class="page-container">
+  <app-sidebar></app-sidebar>
+  <div class="content-container">
+    <header class="main-content-header">
+      <ng-icon name="phosphorAddressBook" style="font-size: 80px;"></ng-icon>
+      <div class="main-content-header-title">
+        <h1>Platform Settings</h1>
+        <p>Manage platform settings and configurations.</p>
+      </div>
+    </header>
+    <main class="main-content">
+      <nav class="tabs">
+        <a routerLink="dashboard" routerLinkActive="active">Platform Dashboard</a>
+        <a routerLink="user-management" routerLinkActive="active">User Management</a>
+        <a routerLink="reporting" routerLinkActive="active">Reporting</a>
+        <a routerLink="security-kvkk" routerLinkActive="active">Security / KVKK</a>
+        <a routerLink="certificates" routerLinkActive="active">Certificates</a>
+        <a routerLink="license" routerLinkActive="active">License</a>
+      </nav>
+
+      <div class="tab-content">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>

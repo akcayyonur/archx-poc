@@ -1,0 +1,170 @@
+<main class="tab-container">
+  <div class="section-header">
+    <div class="section-header-content">
+      <div class="section-header-titles">
+        <h2>Agent License Management</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="license-content">
+    <div class="carousel-wrapper">
+      <button class="chevron-btn chevron-left" (click)="scrollLeft()">
+        <ng-icon name="phosphorCaretLeft"></ng-icon>
+      </button>
+      <div class="license-carousel" #carousel>
+        <div class="license-card">
+          <div class="card-content">
+            <div class="card-title-wrapper">
+              <div class="card-color-bar card-purple"></div>
+              <h3 class="card-title">Request Fulfillment</h3>
+            </div>
+            
+            <div class="license-field">
+              <span class="field-label">License Key</span>
+              <input type="text" class="license-input" value="RF-XXXX-XXXX-XXXX" readonly>
+            </div>
+            
+            <div class="valid-until">
+              <span class="field-label">Valid Until:</span>
+              <span class="valid-date">2025-12-31</span>
+            </div>
+            
+            <div class="features-section">
+              <span class="field-label">Features</span>
+              <div class="features-list">
+                <span class="feature-pill">Auto-routing</span>
+                <span class="feature-pill">SLA Management</span>
+                <span class="feature-pill">Priority Queue</span>
+              </div>
+            </div>
+            
+            <div class="card-actions">
+              <button class="download-btn">Download</button>
+              <button class="renew-btn">Renew</button>
+            </div>
+            
+            <div class="status-bar status-active">
+              <span>Active</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="license-card">
+          <div class="card-content">
+            <div class="card-title-wrapper">
+              <div class="card-color-bar card-brown"></div>
+              <h3 class="card-title">Root Cause Analysis</h3>
+            </div>
+            
+            <div class="license-field">
+              <span class="field-label">Licence Key</span>
+              <input type="text" class="license-input" value="RCA-XXXX-XXXX-XXXX" readonly>
+            </div>
+            
+            <div class="valid-until">
+              <span class="field-label">Valid Untill:</span>
+              <span class="valid-date">2025-12-31</span>
+            </div>
+            
+            <div class="features-section">
+              <span class="field-label">Features</span>
+              <div class="features-list">
+                <span class="feature-pill">AI Analysis</span>
+                <span class="feature-pill">Pattern Recognition</span>
+                <span class="feature-pill">Historical Correlation</span>
+              </div>
+            </div>
+            
+            <div class="card-actions">
+              <button class="download-btn">Download</button>
+              <button class="renew-btn">Renew</button>
+            </div>
+            
+            <div class="status-bar status-active">
+              <span>Active</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="license-card">
+          <div class="card-content">
+            <div class="card-title-wrapper">
+              <div class="card-color-bar card-green"></div>
+              <h3 class="card-title">Capacity & Forecast Agent</h3>
+            </div>
+            
+            <div class="license-field">
+              <span class="field-label">Licence Key</span>
+              <input type="text" class="license-input" value="CAP-XXXX-XXXX-XXXX" readonly>
+            </div>
+            
+            <div class="valid-until">
+              <span class="field-label">Valid Untill:</span>
+              <span class="valid-date">2025-12-31</span>
+            </div>
+            
+            <div class="features-section">
+              <span class="field-label">Features</span>
+              <div class="features-list">
+                <span class="feature-pill">Predictive Analytics</span>
+                <span class="feature-pill">Resource Planning</span>
+                <span class="feature-pill">Trend Analysis</span>
+              </div>
+            </div>
+            
+            <div class="card-actions">
+              <button class="download-btn">Download</button>
+              <button class="renew-btn">Renew</button>
+            </div>
+            
+            <div class="status-bar status-active">
+              <span>Active</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="license-card">
+          <div class="card-content">
+            <div class="card-title-wrapper">
+              <div class="card-color-bar card-pink"></div>
+              <h3 class="card-title">Change Risk (CHG-RISK)</h3>
+            </div>
+            
+            <div class="license-field">
+              <span class="field-label">License Key</span>
+              <input type="text" class="license-input" value="RF-XXXX-XXXX-XXXX" readonly>
+            </div>
+            
+            <div class="valid-until">
+              <span class="field-label">Valid Until:</span>
+              <span class="valid-date">2025-12-31</span>
+            </div>
+            
+            <div class="features-section">
+              <span class="field-label">Features</span>
+              <div class="features-list">
+                <span class="feature-pill">AI Analysis</span>
+                <span class="feature-pill">Pattern Recognition</span>
+                <span class="feature-pill">Historical Correlation</span>
+              </div>
+            </div>
+            
+            <div class="card-actions">
+              <button class="download-btn">Download</button>
+              <button class="renew-btn">Renew</button>
+            </div>
+            
+            <div class="status-bar status-active">
+              <span>Active</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="chevron-btn chevron-right" (click)="scrollRight()">
+        <ng-icon name="phosphorCaretRight"></ng-icon>
+      </button>
+    </div>
+  </div>
+</main>
+

@@ -1,0 +1,220 @@
+<div class="page-wrapper">
+  <app-sidebar [agents]="agents" [activeAgentId]="selectedAgentForDetail || ''"></app-sidebar>
+
+  <div class="content-wrapper">
+    <header class="header-section">
+      <img src="/images/overview_title.png" alt="Overview Title" class="overview-title">
+      <div class="title-container">
+        <h1 class="page-title">Here you can quickly check how your agents are doing.</h1>
+        <p class="page-subtitle">Track health, performance, and anomalies here. Go to the dashboard for more details</p>
+      </div>
+    </header>
+    <div class="cards-wrapper">
+      <button 
+        type="button"
+        class="chevron left" 
+        (click)="prevAgents()" 
+        [disabled]="!canGoPrev()"
+        [attr.aria-disabled]="!canGoPrev()">
+        <ng-icon name="phosphorCaretLeft"></ng-icon>
+      </button>
+      <div class="cards-container">
+        <div class="card" *ngFor="let agent of paginatedAgents; let i = index" [ngClass]="'card-color-' + (i % 6)">
+          <ng-container *ngIf="getAgentPerformance(agent.id) as perf">
+            <div class="card-header">
+              <h3>{{ agent.name }}</h3>
+            </div>
+            <div class="card-body">
+              <div class="metric-row">
+                <div class="metric">
+                  <span class="metric-label">Average Response</span>
+                  <span class="metric-value response-time">{{ perf.avgResponseTime }} ms</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">Throughput</span>
+                  <span class="metric-value throughput">{{ perf.throughput }}/s</span>
+                </div>
+              </div>
+              <div class="metric-row">
+                <div class="metric">
+                  <span class="metric-label">CPU usage</span>
+                  <span class="metric-value cpu-usage" [ngStyle]="{ color: getMetricColor(perf.cpuUsage) }">%{{ formatPercentage(perf.cpuUsage) }}</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">Memory</span>
+                  <span class="metric-value memory-usage" [ngStyle]="{ color: getMetricColor(perf.memoryUsage) }">%{{ formatPercentage(perf.memoryUsage) }}</span>
+                </div>
+              </div>
+              <div class="metric-row">
+                <div class="metric">
+                  <span class="metric-label">Errors</span>
+                  <span class="metric-value errors">{{ perf.errorCount }}</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">Version</span>
+                  <span class="metric-value version">{{ getAgentVersion(agent.id) }}</span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <button 
+        type="button"
+        class="chevron right" 
+        (click)="nextAgents()" 
+        [disabled]="!canGoNext()"
+        [attr.aria-disabled]="!canGoNext()">
+        <ng-icon name="phosphorCaretRight"></ng-icon>
+      </button>
+    </div>
+
+    <!-- Charts Container -->
+    <div class="charts-container">
+      <!-- Data Volume Chart Section -->
+      <div class="data-volume-chart-section">
+        <div class="chart-header">
+          <h2 class="chart-title">Data Volume</h2>
+          <div class="time-filters">
+            <button 
+              class="time-filter" 
+              [class.active]="selectedTimeFilter === '1d'"
+              (click)="selectTimeFilter('1d')">
+              1d
+            </button>
+            <button 
+              class="time-filter" 
+              [class.active]="selectedTimeFilter === '1w'"
+              (click)="selectTimeFilter('1w')">
+              1w
+            </button>
+            <button 
+              class="time-filter" 
+              [class.active]="selectedTimeFilter === '1m'"
+              (click)="selectTimeFilter('1m')">
+              1m
+            </button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="dataVolumeChartData"
+            [options]="dataVolumeChartOptions"
+            [type]="'bubble'">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Usage Intensity Chart Section -->
+      <div class="usage-intensity-chart-section">
+        <div class="chart-header">
+          <h2 class="chart-title">Usage Intensity</h2>
+          <div class="time-filters">
+            <button 
+              class="time-filter" 
+              [class.active]="selectedUsageTimeFilter === '1d'"
+              (click)="selectUsageTimeFilter('1d')">
+              1d
+            </button>
+            <button 
+              class="time-filter" 
+              [class.active]="selectedUsageTimeFilter === '1w'"
+              (click)="selectUsageTimeFilter('1w')">
+              1w
+            </button>
+            <button 
+              class="time-filter" 
+              [class.active]="selectedUsageTimeFilter === '1m'"
+              (click)="selectUsageTimeFilter('1m')">
+              1m
+            </button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="usageIntensityChartData"
+            [options]="usageIntensityChartOptions"
+            [type]="'bar'">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- New System Health Charts -->
+    <div class="system-health-container">
+      <!-- MTTR Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2 class="chart-title">MTTR</h2>
+          <div class="time-filters">
+            <button class="time-filter active">1d</button>
+            <button class="time-filter">1w</button>
+            <button class="time-filter">1m</button>
+          </div>
+        </div>
+        <div class="chart-body">
+          <canvas baseChart id="mttrChart"
+            [data]="newMttrChartData"
+            [options]="newMttrChartOptions"
+            type="bar">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Uptime Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2 class="chart-title">Uptime</h2>
+        </div>
+        <div class="chart-body">
+          <div class="uptime-table">
+            <div class="uptime-header">
+              <span>Agent</span>
+              <span>Status</span>
+              <span>Uptime (Last 7 Days)</span>
+              <span>Availablity</span>
+            </div>
+            <div class="uptime-row" *ngFor="let agent of uptimeData">
+              <span>{{agent.name}}</span>
+              <span class="status-cell"><span class="status-dot" [ngClass]="agent.status.toLowerCase()"></span> {{agent.status}}</span>
+              <div class="uptime-days">
+                <span *ngFor="let day of agent.uptimeDays" class="day-box" [class.filled]="day"></span>
+              </div>
+              <span>{{agent.avgUptime}}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Health Check Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2 class="chart-title">Health Check</h2>
+        </div>
+        <div class="chart-body health-check-body">
+          <div class="health-legend">
+            <div class="legend-item">
+              <span class="legend-dot working"></span>
+              <span>Working</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot warning"></span>
+              <span>Warning</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot stopped"></span>
+              <span>Stopped</span>
+            </div>
+          </div>
+          <div class="health-chart-container">
+            <canvas baseChart id="healthCheckChart"
+              [data]="healthCheckChartData"
+              [options]="healthCheckChartOptions"
+              type="doughnut">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<main class="tab-container">
+  <div class="section-header">
+    <div class="section-header-content">
+      <div class="section-header-titles">
+        <h2>Reporting</h2>
+      </div>
+      <div class="section-header-actions">
+        <button class="export-btn" (click)="exportReport()">
+          <ng-icon name="phosphorArrowSquareUp"></ng-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="reporting-content">
+    <div class="report-config-section">
+      <div class="config-field">
+        <label>Report Type</label>
+        <div class="select-wrapper">
+          <select [(ngModel)]="selectedReportType" class="select-field">
+            <option *ngFor="let type of reportTypes" [value]="type.value">
+              {{ type.label }}
+            </option>
+          </select>
+          <ng-icon name="phosphorCaretDown" class="select-chevron"></ng-icon>
+        </div>
+      </div>
+
+      <div class="date-range-section">
+        <div class="config-field">
+          <label>Start Date</label>
+          <div class="date-picker-wrapper">
+            <p-datepicker
+              inputId="startDate"
+              name="startDate"
+              [(ngModel)]="dateRange.start"
+              [ngModelOptions]="{ standalone: true }"
+              [showIcon]="true"
+              [showOnFocus]="false"
+              dateFormat="dd.mm.yy"
+              placeholder="Select start date"
+              panelStyleClass="reporting-date-panel">
+            </p-datepicker>
+          </div>
+        </div>
+
+        <div class="config-field">
+          <label>End Date</label>
+          <div class="date-picker-wrapper">
+            <p-datepicker
+              inputId="endDate"
+              name="endDate"
+              [(ngModel)]="dateRange.end"
+              [ngModelOptions]="{ standalone: true }"
+              [showIcon]="true"
+              [showOnFocus]="false"
+              dateFormat="dd.mm.yy"
+              placeholder="Select end date"
+              panelStyleClass="reporting-date-panel">
+            </p-datepicker>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+

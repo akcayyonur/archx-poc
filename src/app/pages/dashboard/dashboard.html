@@ -1,0 +1,612 @@
+<div class="dashboard-container">
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-chevron-left back-button" (click)="navigateToUserField()"
+                title="Back to {{ authService.getCurrentUser()?.field || 'field' }} page"></i>
+            <h2>Filters</h2>
+        </div>
+
+        <!-- Dataset Picker -->
+        <div class="dataset-picker">
+            <div class="menu-header">
+                <h3>Layers</h3>
+            </div>
+            <div class="dataset-options">
+                <div *ngFor="let dataset of availableDatasets" class="dataset-option menu-item"
+                    [class.selected]="selectedDataset === dataset.value" (click)="selectDataset(dataset.value)">
+                    <div class="menu-header">
+                        <i class="fas fa-database"></i>
+                        <span>{{ dataset.label }}</span>
+                        <i class="fas fa-check" style="color: #8258ca;" *ngIf="selectedDataset === dataset.value"></i>
+                    </div>
+                    <div class="dataset-description" *ngIf="selectedDataset === dataset.value">
+                        {{ dataset.description }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Data Menu (shown when transaction dataset is selected) -->
+        <div class="hierarchical-menu" *ngIf="selectedDataset === 'transaction'">
+            <div class="menu-header">
+                <h3>Transaction Nodes</h3>
+            </div>
+            <div *ngFor="let node of allNodes" class="menu-item">
+                <div class="menu-header" (click)="toggleNode(node)">
+                    <i class="fas fa-server"></i>
+                    <span>{{ node }}</span>
+                    <i class="fas fa-chevron-right" [class.rotated]="expandedNodes[node]"></i>
+                </div>
+
+                <!-- Transactions for this node -->
+                <div class="submenu" [class.expanded]="expandedNodes[node]">
+                    <div *ngFor="let ci of getRelatedCIsForNode(node)" class="submenu-item">
+                        <div class="submenu-header" (click)="toggleTransaction(node, ci)">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>{{ ci }}</span>
+                            <i class="fas fa-chevron-right" [class.rotated]="expandedTransactions[node + '-' + ci]"></i>
+                        </div>
+
+                        <!-- Metrics for this transaction -->
+                        <div class="metrics-menu" [class.expanded]="expandedTransactions[node + '-' + ci]">
+                            <div *ngFor="let metric of getMetricsForDataset(selectedDataset)" class="metric-item"
+                                [class.selected]="isMetricSelected(node, ci, metric.value)"
+                                (click)="selectMetric(node, ci, metric.value)">
+                                <i class="fas fa-chart-line"></i>
+                                <span>{{ metric.label }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Server Data Menu (shown when server dataset is selected) -->
+        <div class="hierarchical-menu" *ngIf="selectedDataset === 'server'">
+            <div class="menu-header">
+                <h3>Server Nodes</h3>
+            </div>
+            <div *ngFor="let node of allServerNodes" class="menu-item">
+                <div class="menu-header" (click)="toggleServerNode(node)">
+                    <i class="fas fa-server"></i>
+                    <span>{{ node }}</span>
+                    <i class="fas fa-chevron-right" [class.rotated]="expandedServerNodes[node]"></i>
+                </div>
+
+                <!-- Metrics for this server node -->
+                <div class="submenu" [class.expanded]="expandedServerNodes[node]">
+                    <div *ngFor="let metric of getMetricsForDataset(selectedDataset)" class="metric-item"
+                        [class.selected]="isServerMetricSelected(node, metric.value)"
+                        (click)="selectServerMetric(node, metric.value)">
+                        <i class="fas fa-chart-line"></i>
+                        <span>{{ metric.label }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Settings Accordion -->
+
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <h1>ArchX Anomaly Detection Dashboard</h1>
+
+
+
+        <div class="analysis-container">
+            <!-- Chart Section (Left Half) -->
+            <div class="chart-container">
+                <!-- Chart Title -->
+                <div class="chart-header">
+                    <h3 style="font-weight: 500;">{{ getChartTitle() }}</h3>
+
+                    <!-- Compact Time Range Selector in top right -->
+                    <div class="compact-time-selector">
+                        <div class="time-display">
+                            <div class="time-item">
+                                <span class="time-label">Start:</span>
+                                <span class="time-value">{{ formatTimeDisplay(startDate) }}</span>
+                            </div>
+                            <div class="time-item">
+                                <span class="time-label">End:</span>
+                                <span class="time-value">{{ formatTimeDisplay(endDate) }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Slider and Quick Buttons Container -->
+                        <div class="slider-buttons-container">
+                            <!-- PrimeNG Range Slider -->
+                            <p-slider [(ngModel)]="sliderRange" [range]="true" [min]="0" [max]="100" [step]="1"
+                                (onChange)="onSliderChange($event)" class="time-slider">
+                            </p-slider>
+
+                            <!-- Quick Time Selection Buttons -->
+                            <div class="quick-time-buttons">
+                                <button class="quick-time-btn" (click)="setQuickTimeRange('6h')">6h</button>
+                                <button class="quick-time-btn" (click)="setQuickTimeRange('12h')">12h</button>
+                                <button class="quick-time-btn" (click)="setQuickTimeRange('1d')">24h</button>
+                                <button class="quick-time-btn zoom-reset-btn" (click)="resetZoom()"
+                                    title="Reset zoom to full view">
+                                    <i class="fas fa-search-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="isLoading" class="loading">
+                    <div class="loading-spinner"></div>
+                    Analyzing data... Please wait...
+                </div>
+
+                <div *ngIf="!isLoading && (!chartData || chartData.datasets.length === 0)" class="no-data">
+                    <p>No data available. Please select a dataset, node, and metric to begin analysis.</p>
+                </div>
+                <div *ngIf="!isLoading && chartData && chartData.datasets.length > 0" class="chart">
+                    <canvas baseChart [data]="chartData" [options]="chartOptions" [type]="'line'">
+                    </canvas>
+                </div>
+            </div>
+
+            <!-- Service Model Tree Section (Right Half) -->
+            <div class="service-model-section">
+                <div class="service-model-header">
+                    <h3>Service Model</h3>
+                    <button class="refresh-ci-btn" (click)="refreshConfigurationItems()" [disabled]="isLoadingCI"
+                        title="Refresh Configuration Items">
+                        <i class="fas fa-sync-alt" [class.spinning]="isLoadingCI"></i>
+                    </button>
+                </div>
+
+                <div *ngIf="isLoadingCI" class="loading">
+                    <div class="loading-spinner"></div>
+                    Loading service model...
+                </div>
+
+                <div *ngIf="!isLoadingCI && serviceModelTree" class="service-model-tree">
+                    <div class="tree-container" #treeContainer></div>
+                </div>
+
+                <div *ngIf="!isLoadingCI && !serviceModelTree" class="no-service-model">
+                    <p>Service model not available.</p>
+                    <button class="btn btn-primary" (click)="loadConfigurationItems()">Load Service Model</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Correlation Analysis Section -->
+        <div class="bottom-section">
+            <div class="correlation-section">
+                <div class="correlation-header">
+                    <h3>{{ getCorrelationSectionTitle() }}</h3>
+                    <div class="correlation-controls">
+                        <button class="btn btn-primary correlation-toggle-btn" (click)="toggleCorrelationSection()"
+                            [disabled]="false">
+                            {{ showCorrelationSection ? 'Hide' : 'Show' }} Correlation Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <div *ngIf="showCorrelationSection && isCorrelationAvailable()" class="correlation-content">
+                    <!-- Correlation Loading -->
+                    <div *ngIf="isCorrelationLoading" class="correlation-loading">
+                        <div class="loading-spinner"></div>
+                        <p>Running correlation analysis... This may take a few minutes for large datasets.</p>
+                    </div>
+
+                    <!-- Correlation Results -->
+                    <div *ngIf="!isCorrelationLoading && correlationResults" class="correlation-results">
+                        <!-- Summary Statistics -->
+                        <div class="correlation-summary">
+                            <h4>Summary Statistics</h4>
+                            <div class="summary-stats-grid">
+                                <div class="summary-stat">
+                                    <span class="stat-label">Total Correlations:</span>
+                                    <span class="stat-value">{{ correlationResults.summary_stats.total_correlations
+                                        }}</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Average Correlation:</span>
+                                    <span class="stat-value">{{ correlationResults.summary_stats.average_correlation
+                                        }}</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Strong Correlations:</span>
+                                    <span class="stat-value strong-correlation">{{
+                                        correlationResults.summary_stats.strong_correlation_count }}</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Moderate Correlations:</span>
+                                    <span class="stat-value moderate-correlation">{{
+                                        correlationResults.summary_stats.moderate_correlation_count }}</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Weak Correlations:</span>
+                                    <span class="stat-value weak-correlation">{{
+                                        correlationResults.summary_stats.weak_correlation_count }}</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Analysis Period:</span>
+                                    <span class="stat-value">{{
+                                        formatTimeDisplay(correlationResults.analysis_period.start_date) }} - {{
+                                        formatTimeDisplay(correlationResults.analysis_period.end_date) }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Strong Correlations -->
+                        <div *ngIf="correlationResults.correlation_results.strong_correlations.length > 0"
+                            class="correlation-group">
+                            <h4 class="strong-correlation-header">Strong Correlations (≥0.8)</h4>
+                            <div class="correlation-list">
+                                <div *ngFor="let corr of correlationResults.correlation_results.strong_correlations"
+                                    class="correlation-item strong-correlation" (click)="showCorrelationChartFor(corr)">
+                                    <div class="correlation-header">
+                                        <span class="correlation-value">{{ formatCorrelation(corr.correlation) }}</span>
+                                        <span class="correlation-strength">Strong</span>
+                                    </div>
+                                    <div class="correlation-details">
+                                        <div class="correlation-pair">
+                                            <span class="entity1"
+                                                [title]="corr.node1 + (corr.relatedci1 ? ' - ' + corr.relatedci1 : '') + ' (' + corr.metric1 + ')'">
+                                                {{ corr.node1 }}{{ corr.relatedci1 ? ' - ' + corr.relatedci1 : '' }} ({{
+                                                corr.metric1 }})
+                                            </span>
+                                            <span class="correlation-arrow">↔</span>
+                                            <span class="entity2"
+                                                [title]="corr.node2 + (corr.relatedci2 ? ' - ' + corr.relatedci2 : '') + ' (' + corr.metric2 + ')'">
+                                                {{ corr.node2 }}{{ corr.relatedci2 ? ' - ' + corr.relatedci2 : '' }} ({{
+                                                corr.metric2 }})
+                                            </span>
+                                        </div>
+                                        <div class="correlation-meta">
+                                            <span class="data-points">{{ corr.data_points }} data points</span>
+                                            <span class="common-timestamps">{{ corr.common_timestamps }} common
+                                                timestamps</span>
+                                        </div>
+                                    </div>
+                                    <div class="correlation-click-hint">
+                                        <i class="fas fa-chart-line"></i> Click to view chart
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Moderate Correlations -->
+                        <div *ngIf="correlationResults.correlation_results.moderate_correlations.length > 0"
+                            class="correlation-group">
+                            <h4 class="moderate-correlation-header">Moderate Correlations (0.6-0.8)</h4>
+                            <div class="correlation-list">
+                                <div *ngFor="let corr of correlationResults.correlation_results.moderate_correlations"
+                                    class="correlation-item moderate-correlation"
+                                    (click)="showCorrelationChartFor(corr)">
+                                    <div class="correlation-header">
+                                        <span class="correlation-value">{{ formatCorrelation(corr.correlation) }}</span>
+                                        <span class="correlation-strength">Moderate</span>
+                                    </div>
+                                    <div class="correlation-details">
+                                        <div class="correlation-pair">
+                                            <span class="entity1"
+                                                [title]="corr.node1 + (corr.relatedci1 ? ' - ' + corr.relatedci1 : '') + ' (' + corr.metric1 + ')'">
+                                                {{ corr.node1 }}{{ corr.relatedci1 ? ' - ' + corr.relatedci1 : '' }} ({{
+                                                corr.metric1 }})
+                                            </span>
+                                            <span class="correlation-arrow">↔</span>
+                                            <span class="entity2"
+                                                [title]="corr.node2 + (corr.relatedci2 ? ' - ' + corr.relatedci2 : '') + ' (' + corr.metric2 + ')'">
+                                                {{ corr.node2 }}{{ corr.relatedci2 ? ' - ' + corr.relatedci2 : '' }} ({{
+                                                corr.metric2 }})
+                                            </span>
+                                        </div>
+                                        <div class="correlation-meta">
+                                            <span class="data-points">{{ corr.data_points }} data points</span>
+                                            <span class="common-timestamps">{{ corr.common_timestamps }} common
+                                                timestamps</span>
+                                        </div>
+                                    </div>
+                                    <div class="correlation-click-hint">
+                                        <i class="fas fa-chart-line"></i> Click to view chart
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weak Correlations -->
+                        <div *ngIf="correlationResults.correlation_results.weak_correlations.length > 0"
+                            class="correlation-group">
+                            <h4 class="weak-correlation-header">Weak Correlations (0.6-0.7)</h4>
+                            <div class="correlation-list">
+                                <div *ngFor="let corr of correlationResults.correlation_results.weak_correlations"
+                                    class="correlation-item weak-correlation" (click)="showCorrelationChartFor(corr)">
+                                    <div class="correlation-header">
+                                        <span class="correlation-value">{{ formatCorrelation(corr.correlation) }}</span>
+                                        <span class="correlation-strength">Weak</span>
+                                    </div>
+                                    <div class="correlation-details">
+                                        <div class="correlation-pair">
+                                            <span class="entity1"
+                                                [title]="corr.node1 + (corr.relatedci1 ? ' - ' + corr.relatedci1 : '') + ' (' + corr.metric1 + ')'">
+                                                {{ corr.node1 }}{{ corr.relatedci1 ? ' - ' + corr.relatedci1 : '' }} ({{
+                                                corr.metric1 }})
+                                            </span>
+                                            <span class="correlation-arrow">↔</span>
+                                            <span class="entity2"
+                                                [title]="corr.node2 + (corr.relatedci2 ? ' - ' + corr.relatedci2 : '') + ' (' + corr.metric2 + ')'">
+                                                {{ corr.node2 }}{{ corr.relatedci2 ? ' - ' + corr.relatedci2 : '' }} ({{
+                                                corr.metric2 }})
+                                            </span>
+                                        </div>
+                                        <div class="correlation-meta">
+                                            <span class="data-points">{{ corr.data_points }} data points</span>
+                                            <span class="common-timestamps">{{ corr.common_timestamps }} common
+                                                timestamps</span>
+                                        </div>
+                                    </div>
+                                    <div class="correlation-click-hint">
+                                        <i class="fas fa-chart-line"></i> Click to view chart
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- No Correlations Found -->
+                        <div *ngIf="correlationResults.correlation_results.total_correlations === 0"
+                            class="no-correlations">
+                            <p>No correlations found above the minimum threshold of 0.6.</p>
+                            <p>Try expanding the date range to find more correlations.</p>
+                        </div>
+                    </div>
+
+                    <!-- Correlation Status Info -->
+                    <div *ngIf="!isCorrelationLoading && !correlationResults && correlationStatus"
+                        class="correlation-info">
+                        <p>Correlation analysis runs automatically when you show this section.</p>
+                        <p>This will analyze correlations between all {{ selectedDataset === 'transaction' ?
+                            'node-transaction' : 'node' }} combinations for the selected date range.</p>
+                    </div>
+                </div>
+
+                <!-- Correlation Not Available -->
+                <div *ngIf="showCorrelationSection && !isCorrelationAvailable()" class="correlation-not-available">
+                    <p>Correlation analysis is not available for the current dataset.</p>
+                    <p>Please ensure data is loaded and try again.</p>
+                </div>
+            </div>
+
+            <!-- LLM Insights Section -->
+            <div class="llm-insights-section">
+                <div class="llm-insights-header">
+                    <h3>AI Insights & Recommendations</h3>
+                    <div class="llm-insights-controls">
+                        <button class="btn btn-primary ai-insights-toggle-btn" (click)="toggleAIInsights()"
+                            [disabled]="!canGenerateInsights()">
+                            {{ showAIInsights ? 'Hide' : 'Show' }} AI Insights
+                        </button>
+                    </div>
+                </div>
+
+                <div *ngIf="showAIInsights" class="llm-insights-content">
+                    <!-- AI Insights Loading -->
+                    <div *ngIf="isAIInsightsLoading" class="ai-insights-loading">
+                        <div class="loading-spinner"></div>
+                        <p>Generating AI-powered insights... This may take a few moments.</p>
+                    </div>
+
+                    <!-- AI Insights Results -->
+                    <div *ngIf="!isAIInsightsLoading && aiInsights" class="ai-insights-results">
+                        <div class="insights-container">
+                            <!-- Executive Summary -->
+                            <div class="insight-section">
+                                <div class="insight-header" (click)="toggleInsightSection('executive_summary')"
+                                    (keydown.enter)="toggleInsightSection('executive_summary')"
+                                    (keydown.space)="toggleInsightSection('executive_summary')" tabindex="0"
+                                    role="button" [attr.aria-expanded]="isInsightSectionExpanded('executive_summary')"
+                                    [attr.aria-controls]="'executive_summary-content'">
+                                    <h3>{{ aiInsights.executive_summary.title }}</h3>
+                                    <i class="fas fa-chevron-down"
+                                        [class.rotated]="isInsightSectionExpanded('executive_summary')"></i>
+                                </div>
+                                <div class="insight-content"
+                                    [class.expanded]="isInsightSectionExpanded('executive_summary')"
+                                    id="executive_summary-content" role="region"
+                                    [attr.aria-hidden]="!isInsightSectionExpanded('executive_summary')">
+                                    <p>{{ aiInsights.executive_summary.content }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Anomaly Analysis -->
+                            <div class="insight-section">
+                                <div class="insight-header" (click)="toggleInsightSection('anomaly_analysis')"
+                                    (keydown.enter)="toggleInsightSection('anomaly_analysis')"
+                                    (keydown.space)="toggleInsightSection('anomaly_analysis')" tabindex="0"
+                                    role="button" [attr.aria-expanded]="isInsightSectionExpanded('anomaly_analysis')"
+                                    [attr.aria-controls]="'anomaly_analysis-content'">
+                                    <h3>{{ aiInsights.anomaly_analysis.title }}</h3>
+                                    <i class="fas fa-chevron-down"
+                                        [class.rotated]="isInsightSectionExpanded('anomaly_analysis')"></i>
+                                </div>
+                                <div class="insight-content"
+                                    [class.expanded]="isInsightSectionExpanded('anomaly_analysis')"
+                                    id="anomaly_analysis-content" role="region"
+                                    [attr.aria-hidden]="!isInsightSectionExpanded('anomaly_analysis')">
+                                    <p>{{ aiInsights.anomaly_analysis.content }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Causal Analysis -->
+                            <div class="insight-section">
+                                <div class="insight-header" (click)="toggleInsightSection('causal_analysis')"
+                                    (keydown.enter)="toggleInsightSection('causal_analysis')"
+                                    (keydown.space)="toggleInsightSection('causal_analysis')" tabindex="0" role="button"
+                                    [attr.aria-expanded]="isInsightSectionExpanded('causal_analysis')"
+                                    [attr.aria-controls]="'causal_analysis-content'">
+                                    <h3>{{ aiInsights.causal_analysis.title }}</h3>
+                                    <i class="fas fa-chevron-down"
+                                        [class.rotated]="isInsightSectionExpanded('causal_analysis')"></i>
+                                </div>
+                                <div class="insight-content"
+                                    [class.expanded]="isInsightSectionExpanded('causal_analysis')"
+                                    id="causal_analysis-content" role="region"
+                                    [attr.aria-hidden]="!isInsightSectionExpanded('causal_analysis')">
+                                    <p>{{ aiInsights.causal_analysis.content }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Business Impact -->
+                            <div class="insight-section">
+                                <div class="insight-header" (click)="toggleInsightSection('business_impact')"
+                                    (keydown.enter)="toggleInsightSection('business_impact')"
+                                    (keydown.space)="toggleInsightSection('business_impact')" tabindex="0" role="button"
+                                    [attr.aria-expanded]="isInsightSectionExpanded('business_impact')"
+                                    [attr.aria-controls]="'business_impact-content'">
+                                    <h3>{{ aiInsights.business_impact.title }}</h3>
+                                    <i class="fas fa-chevron-down"
+                                        [class.rotated]="isInsightSectionExpanded('business_impact')"></i>
+                                </div>
+                                <div class="insight-content"
+                                    [class.expanded]="isInsightSectionExpanded('business_impact')"
+                                    id="business_impact-content" role="region"
+                                    [attr.aria-hidden]="!isInsightSectionExpanded('business_impact')">
+                                    <p>{{ aiInsights.business_impact.content }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Recommendations -->
+                            <div class="insight-section">
+                                <div class="insight-header" (click)="toggleInsightSection('recommendations')"
+                                    (keydown.enter)="toggleInsightSection('recommendations')"
+                                    (keydown.space)="toggleInsightSection('recommendations')" tabindex="0" role="button"
+                                    [attr.aria-expanded]="isInsightSectionExpanded('recommendations')"
+                                    [attr.aria-controls]="'recommendations-content'">
+                                    <h3>{{ aiInsights.recommendations.title }}</h3>
+                                    <i class="fas fa-chevron-down"
+                                        [class.rotated]="isInsightSectionExpanded('recommendations')"></i>
+                                </div>
+                                <div class="insight-content"
+                                    [class.expanded]="isInsightSectionExpanded('recommendations')"
+                                    id="recommendations-content" role="region"
+                                    [attr.aria-hidden]="!isInsightSectionExpanded('recommendations')">
+                                    <p>{{ aiInsights.recommendations.content }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Risk Mitigation -->
+                            <div class="insight-section">
+                                <div class="insight-header" (click)="toggleInsightSection('risk_mitigation')"
+                                    (keydown.enter)="toggleInsightSection('risk_mitigation')"
+                                    (keydown.space)="toggleInsightSection('risk_mitigation')" tabindex="0" role="button"
+                                    [attr.aria-expanded]="isInsightSectionExpanded('risk_mitigation')"
+                                    [attr.aria-controls]="'risk_mitigation-content'">
+                                    <h3>{{ aiInsights.risk_mitigation.title }}</h3>
+                                    <i class="fas fa-chevron-down"
+                                        [class.rotated]="isInsightSectionExpanded('risk_mitigation')"></i>
+                                </div>
+                                <div class="insight-content"
+                                    [class.expanded]="isInsightSectionExpanded('risk_mitigation')"
+                                    id="risk_mitigation-content" role="region"
+                                    [attr.aria-hidden]="!isInsightSectionExpanded('risk_mitigation')">
+                                    <p>{{ aiInsights.risk_mitigation.content }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights Placeholder -->
+                    <div *ngIf="!isAIInsightsLoading && !aiInsights" class="insights-placeholder">
+                        <div class="insight-icon">🤖</div>
+                        <h4>AI-Powered Analysis</h4>
+                        <p>Intelligent insights and recommendations based on your anomaly detection and correlation
+                            analysis results.</p>
+                        <div class="insight-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">📊</span>
+                                <span>Pattern Recognition</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🔍</span>
+                                <span>Root Cause Analysis</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">💡</span>
+                                <span>Proactive Recommendations</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">📈</span>
+                                <span>Performance Optimization</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights Not Available -->
+                    <div *ngIf="!canGenerateInsights()" class="ai-insights-not-available">
+                        <p>AI insights require a complete analysis selection.</p>
+                        <p>Please select a dataset, node, metric, and date range to generate insights.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Correlation Chart Modal -->
+    <div *ngIf="showCorrelationChart" class="correlation-chart-modal">
+        <div class="correlation-chart-overlay" (click)="closeCorrelationChart()"></div>
+        <div class="correlation-chart-container">
+            <div class="correlation-chart-header">
+                <h3>Correlation Chart</h3>
+                <div class="chart-time-info">
+                    <span class="time-range-note">📊 Showing last 24 hours for focused analysis</span>
+                </div>
+                <button class="close-btn" (click)="closeCorrelationChart()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="correlation-chart-content">
+                <!-- Loading State -->
+                <div *ngIf="isCorrelationChartLoading" class="correlation-chart-loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading correlation data...</p>
+                </div>
+
+                <!-- Chart Display -->
+                <div *ngIf="!isCorrelationChartLoading" class="chart-wrapper">
+                    <canvas baseChart [data]="correlationChartData" [options]="correlationChartOptions" [type]="'line'">
+                    </canvas>
+                </div>
+
+                <!-- Correlation Details -->
+                <div *ngIf="selectedCorrelation && !isCorrelationChartLoading" class="correlation-details-summary">
+                    <div class="correlation-info-card">
+                        <h4>Correlation Details</h4>
+                        <div class="correlation-pair-info">
+                            <div class="metric-info">
+                                <strong>Metric 1:</strong>
+                                {{ selectedCorrelation.node1 }}{{ selectedCorrelation.relatedci1 ? ' - ' +
+                                selectedCorrelation.relatedci1 : '' }} ({{ selectedCorrelation.metric1 }})
+                            </div>
+                            <div class="metric-info">
+                                <strong>Metric 2:</strong>
+                                {{ selectedCorrelation.node2 }}{{ selectedCorrelation.relatedci2 ? ' - ' +
+                                selectedCorrelation.relatedci2 : '' }} ({{ selectedCorrelation.metric2 }})
+                            </div>
+                        </div>
+                        <div class="correlation-stats">
+                            <span class="correlation-value">
+                                <strong>Correlation:</strong> {{ formatCorrelation(selectedCorrelation.correlation) }}
+                            </span>
+                            <span class="data-points">
+                                <strong>Data Points:</strong> {{ selectedCorrelation.data_points }}
+                            </span>
+                            <span class="common-timestamps">
+                                <strong>Common Timestamps:</strong> {{ selectedCorrelation.common_timestamps }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
