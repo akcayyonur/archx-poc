@@ -684,116 +684,293 @@ export class AnomalyInsights implements AfterViewInit, OnDestroy {
   updateAnomalousChartData(): void {
     if (!this.anomalousChart) return;
 
-    // Generate mock data based on time range
-    let points = 24;
-    let category = [];
-    let seriesData1 = [];
-    let seriesData2 = [];
-    let seriesData3 = [];
+    // Generate realistic anomaly spike data
+    let category: string[] = [];
+    let seriesData1: number[] = [];
+    let seriesData2: number[] = [];
+    let seriesData3: number[] = [];
+    
+    let baseTime: Date = new Date();
+    let interval: number = 60;
+    let points: number = 24;
+    let timeFormat: string = 'HH:mm';
 
-    switch (this.selectedTimeRange) {
-      case '24H': points = 24; break;
-      case '5D': points = 60; break;
-      case '1W': points = 84; break;
-      case '1M': points = 120; break;
+    switch (this.selectedTimeRange!) {
+      case '24H':
+        baseTime = new Date(2024, 3, 4, 0, 0, 0);
+        interval = 60;
+        points = 24;
+        timeFormat = 'HH:mm';
+        break;
+      case '5D':
+        baseTime = new Date(2024, 3, 1, 0, 0, 0);
+        interval = 120;
+        points = 60;
+        timeFormat = 'MM/DD HH:mm';
+        break;
+      case '1W':
+        baseTime = new Date(2024, 3, 1, 0, 0, 0);
+        interval = 120;
+        points = 84;
+        timeFormat = 'ddd HH:mm';
+        break;
+      case '1M':
+        baseTime = new Date(2024, 3, 1, 0, 0, 0);
+        interval = 720;
+        points = 60;
+        timeFormat = 'MM/DD';
+        break;
+      default:
+        baseTime = new Date(2024, 3, 4, 0, 0, 0);
+        interval = 60;
+        points = 24;
+        timeFormat = 'HH:mm';
     }
 
+    // Generate time labels and spike data
     for (let i = 0; i < points; i++) {
-        category.push(i.toString());
-        seriesData1.push(Math.floor(Math.random() * 40) + 10);
-        seriesData2.push(Math.floor(Math.random() * 30) + 5);
-        seriesData3.push(Math.floor(Math.random() * 20));
+      const currentTime = new Date(baseTime.getTime() + i * interval * 60000);
+      
+      let timeLabel: string;
+      if (timeFormat === 'HH:mm') {
+        const hours = String(currentTime.getHours()).padStart(2, '0');
+        const minutes = String(currentTime.getMinutes()).padStart(2, '0');
+        timeLabel = `${hours}:${minutes}`;
+      } else if (timeFormat === 'ddd HH:mm') {
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const dayName = dayNames[currentTime.getDay()];
+        const hours = String(currentTime.getHours()).padStart(2, '0');
+        const minutes = String(currentTime.getMinutes()).padStart(2, '0');
+        timeLabel = `${dayName} ${hours}:${minutes}`;
+      } else if (timeFormat === 'MM/DD HH:mm') {
+        const month = String(currentTime.getMonth() + 1).padStart(2, '0');
+        const day = String(currentTime.getDate()).padStart(2, '0');
+        const hours = String(currentTime.getHours()).padStart(2, '0');
+        const minutes = String(currentTime.getMinutes()).padStart(2, '0');
+        timeLabel = `${month}/${day} ${hours}:${minutes}`;
+      } else {
+        const month = String(currentTime.getMonth() + 1).padStart(2, '0');
+        const day = String(currentTime.getDate()).padStart(2, '0');
+        timeLabel = `${month}/${day}`;
+      }
+      
+      category.push(timeLabel);
+      
+      let spikePositions1: number[] = [];
+      let spikePositions2: number[] = [];
+      let spikePositions3: number[] = [];
+      
+      switch (this.selectedTimeRange!) {
+        case '24H':
+          spikePositions1 = [5, 10, 15];
+          spikePositions2 = [8, 18];
+          spikePositions3 = [12, 16, 20];
+          break;
+        case '5D':
+          spikePositions1 = [8, 15, 32, 48];
+          spikePositions2 = [12, 28, 45];
+          spikePositions3 = [20, 35, 52];
+          break;
+        case '1W':
+          spikePositions1 = [12, 25, 40, 60, 75];
+          spikePositions2 = [18, 35, 55, 70];
+          spikePositions3 = [22, 45, 65, 78];
+          break;
+        case '1M':
+          spikePositions1 = [8, 18, 32, 45];
+          spikePositions2 = [12, 25, 40, 52];
+          spikePositions3 = [15, 30, 48];
+          break;
+      }
+      
+      if (spikePositions1.includes(i)) {
+        seriesData1.push(Math.min(Math.floor(Math.random() * 30) + 70, 95));
+      } else {
+        seriesData1.push(Math.floor(Math.random() * 8) + 2);
+      }
+      
+      if (spikePositions2.includes(i)) {
+        seriesData2.push(Math.min(Math.floor(Math.random() * 20) + 25, 45));
+      } else {
+        seriesData2.push(Math.floor(Math.random() * 6) + 1);
+      }
+      
+      if (spikePositions3.includes(i)) {
+        seriesData3.push(Math.min(Math.floor(Math.random() * 25) + 15, 40));
+      } else {
+        seriesData3.push(Math.floor(Math.random() * 5) + 0.5);
+      }
     }
 
     const option: echarts.EChartsOption = {
         backgroundColor: 'transparent',
+        animation: true,
+        animationDuration: 1500,
+        animationEasing: 'linear',
         tooltip: {
             trigger: 'axis',
             backgroundColor: 'rgba(31, 30, 51, 0.95)',
-            borderColor: 'rgba(255, 255, 255, 0.1)',
-            textStyle: { color: '#EDEAF1' },
-            position: (point, params, dom, rect, size) => {
-              // Ensure tooltip stays within chart
-              const [x, y] = point;
-              return [x, '10%'];
+            borderColor: 'rgba(255, 255, 255, 0.2)',
+            borderWidth: 1,
+            textStyle: { 
+              color: '#EDEAF1',
+              fontSize: 12
             },
             axisPointer: {
                 type: 'cross',
-                lineStyle: { color: 'rgba(255, 255, 255, 0.3)' }
+                lineStyle: { 
+                  color: 'rgba(255, 255, 255, 0.3)',
+                  type: 'dashed'
+                }
             }
         },
         grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            top: '10%',
+            left: '6%',
+            right: '3%',
+            bottom: '12%',
+            top: '8%',
             containLabel: true
         },
         xAxis: {
             type: 'category',
             data: category,
             boundaryGap: false,
-            axisLine: { show: false },
-            axisTick: { show: false },
-            axisLabel: { 
-                color: 'rgba(255, 255, 255, 0.5)',
-                interval: Math.floor(points / 6)
+            axisLine: { 
+              show: true,
+              lineStyle: { 
+                color: 'rgba(255, 255, 255, 0.15)',
+                width: 1
+              }
             },
-            splitLine: { show: false } // Disable vertical grid lines for cleaner look or enable
+            axisTick: { 
+              show: true,
+              lineStyle: { 
+                color: 'rgba(255, 255, 255, 0.1)',
+                width: 1
+              },
+              length: 4
+            },
+            axisLabel: { 
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontSize: 10,
+                interval: this.selectedTimeRange === '24H' ? 2 : Math.floor(points / 10),
+                rotate: this.selectedTimeRange === '24H' ? 0 : 30,
+                margin: 10
+            },
+            splitLine: { 
+              show: true,
+              lineStyle: { 
+                color: 'rgba(255, 255, 255, 0.08)',
+                type: 'solid',
+                width: 1
+              }
+            }
         },
         yAxis: {
             type: 'value',
-            splitLine: {
-                lineStyle: { color: 'rgba(255, 255, 255, 0.05)' }
+            min: 0,
+            max: 100,
+            interval: 10,
+            axisLine: {
+              show: true,
+              lineStyle: { 
+                color: 'rgba(255, 255, 255, 0.15)',
+                width: 1
+              }
             },
-            axisLabel: { color: 'rgba(255, 255, 255, 0.5)' }
+            axisTick: {
+              show: true,
+              lineStyle: { 
+                color: 'rgba(255, 255, 255, 0.1)',
+                width: 1
+              },
+              length: 4
+            },
+            splitLine: {
+                show: true,
+                lineStyle: { 
+                  color: 'rgba(255, 255, 255, 0.08)',
+                  type: 'solid',
+                  width: 1
+                }
+            },
+            axisLabel: { 
+              color: 'rgba(255, 255, 255, 0.6)',
+              fontSize: 11,
+              margin: 10,
+              formatter: '{value}.00'
+            }
         },
         series: [
             {
-                name: 'Data 1',
+                name: 'Type A',
                 type: 'line',
                 data: seriesData1,
                 smooth: true,
                 symbol: 'none',
-                lineStyle: { width: 2, color: '#9C7FCF' },
-                areaStyle: {
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        { offset: 0, color: 'rgba(156, 127, 207, 0.4)' },
-                        { offset: 1, color: 'rgba(156, 127, 207, 0.01)' }
-                    ])
-                }
+                lineStyle: { 
+                  width: 2,
+                  color: '#9C7FCF'
+                },
+                emphasis: {
+                  lineStyle: { width: 3 }
+                },
+                animationDuration: 1500,
+                animationEasing: 'linear',
+                animationDelay: (idx: number) => idx * 15
             },
             {
-                name: 'Data 2',
+                name: 'Type B',
                 type: 'line',
                 data: seriesData2,
                 smooth: true,
                 symbol: 'none',
-                lineStyle: { width: 2, color: '#AFCB52' },
-                areaStyle: {
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        { offset: 0, color: 'rgba(175, 203, 82, 0.4)' },
-                        { offset: 1, color: 'rgba(175, 203, 82, 0.01)' }
-                    ])
-                }
+                lineStyle: { 
+                  width: 2,
+                  color: '#5C92F6'
+                },
+                emphasis: {
+                  lineStyle: { width: 3 }
+                },
+                animationDuration: 1500,
+                animationEasing: 'linear',
+                animationDelay: (idx: number) => idx * 15
             },
             {
-                name: 'Data 3',
+                name: 'Type C',
                 type: 'line',
                 data: seriesData3,
                 smooth: true,
                 symbol: 'none',
-                lineStyle: { width: 2, color: '#3A6082' },
-                areaStyle: {
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        { offset: 0, color: 'rgba(58, 96, 130, 0.4)' },
-                        { offset: 1, color: 'rgba(58, 96, 130, 0.01)' }
-                    ])
-                }
+                lineStyle: { 
+                  width: 2,
+                  color: '#FF6F61'
+                },
+                emphasis: {
+                  lineStyle: { width: 3 }
+                },
+                animationDuration: 1500,
+                animationEasing: 'linear',
+                animationDelay: (idx: number) => idx * 15
             }
-        ]
+        ],
+        // Add vertical dashed lines at the end
+        markLine: {
+          symbol: 'none',
+          data: [
+            {
+              xAxis: points - 2,
+              lineStyle: {
+                type: 'dashed',
+                color: 'rgba(255, 255, 255, 0.3)',
+                width: 1
+              }
+            }
+          ],
+          silent: true
+        }
     };
 
-    this.anomalousChart.setOption(option);
+    this.anomalousChart.setOption(option, true);
   }
 }

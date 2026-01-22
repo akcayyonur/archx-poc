@@ -24,7 +24,7 @@ $orange: #fb923c;
 .content-container {
     flex: 1;
     margin-left: 87px;
-    padding: 40px 22px 0px 14px;
+    padding: 40px 4rem 0px 14px;
     display: flex;
     flex-direction: column;
     gap: 36px;
@@ -131,10 +131,10 @@ $orange: #fb923c;
 .filter-container {
     width: 330px;
     height: 100%; /* Top section yüksekliğini doldur */
-    padding: 14px 15px 28px 16px;
+    padding: 14px 14px 14px 14px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 10px;
     background: #141326;
     border-radius: 16px;
 }
@@ -142,64 +142,61 @@ $orange: #fb923c;
 .filter-header {
     display: flex;
     flex-direction: column;
-    gap: 0px;
+    gap: 3px;
     
     .filter-title {
         font-weight: 700;
-        font-size: 28px;
-        line-height: 34px;
+        font-size: 24px;
+        line-height: 28px;
     }
     
     .filter-subtitle {
-
         font-weight: 400;
-        font-size: 16px;
-        line-height: 19px;
+        font-size: 14px;
+        line-height: 17px;
     }
 }
 
 .filter-section {
     background: #1F1E33;
-    border-radius: 12px;
-    padding: 16px;
+    border-radius: 11px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    gap: 12px;
+    gap: 10px;
     
     .filter-section-title {
         font-weight: 500;
-        font-size: 18px;
-        line-height: 22px;
+        font-size: 16px;
+        line-height: 19px;
     }
     
     .filter-section-subtitle {
-
         font-weight: 200;
         font-size: 12px;
-        line-height: 15px;
-
+        line-height: 14px;
     }
     
     .filter-buttons {
         display: flex;
         flex-direction: row;
-        gap: 8px;
-        flex-wrap: nowrap;
+        gap: 7px;
+        flex-wrap: wrap;
     }
 }
 
 .filter-button {
-    min-width:80px;
-    height: 24px;
-    padding: 0px 6px; 
+    min-width: 75px;
+    height: 26px;
+    padding: 0px 10px; 
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.3);
     background: transparent;
-    border-radius: 12px;
+    border-radius: 11px;
     font-weight: 500;
     font-size: 12px;
-    line-height: 15px;
+    line-height: 14px;
     color: #EDEAF1;
     text-wrap: nowrap;
 
