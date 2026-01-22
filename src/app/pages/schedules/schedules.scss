@@ -1,0 +1,251 @@
+$bg: #040517;
+$panel-border: rgba(255, 255, 255, 0.08);
+$text: #f5f7ff;
+$muted: rgba(245, 247, 255, 0.65);
+
+*{
+    font-family: 'Inter', sans-serif;
+    color: #EDEAF1;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    background: #040517;
+    min-height: 100vh;
+}
+
+.content-container {
+    flex: 1;
+    margin-left: 87px;
+    padding: 40px 22px 0px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+
+.header-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.title-container {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: start;
+    gap: 12px;
+    
+    > ng-icon {
+        color: #FFFFFF;
+    }
+}
+
+.title-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    gap: 6px;
+    
+    h1 {
+        font-weight: 800;
+        font-size: 32px;
+        line-height: 39px;
+    }
+    
+    p {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 19px;
+    }
+}
+
+.content-main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 8px;
+
+    .stat-card {
+        border-radius: 12px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 0;
+        min-height: 72px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        position: relative;
+
+        .card-icon {
+            width: 72px;
+            min-width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: #FFFFFF;
+            position: relative;
+            z-index: 1;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            margin: 6px;
+        }
+
+        .card-info {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 0 16px;
+            position: relative;
+            z-index: 1;
+
+            .label {
+                font-size: 17px;
+                color: #EDEAF1;
+                line-height: 1.3;
+                font-weight: 400;
+            }
+
+            .value {
+                font-size: 36px;
+                font-weight: 700;
+                color: #FFFFFF;
+            }
+        }
+
+        // Smooth gradients with proper fading
+        &.pending {
+            background: linear-gradient(90deg, #52304C 0%, #3a2438 25%, #282234 50%, #1d1d2f 75%, #141326 100%);
+        }
+        
+        &.running {
+            background: linear-gradient(90deg, #6C3E3E 0%, #4f3438 25%, #362c34 50%, #23242f 75%, #141326 100%);
+        }
+
+        &.batch-running {
+            background: linear-gradient(90deg, #5C92F6 0%, #4a6fb8 25%, #394f7d 50%, #283651 75%, #141326 100%);
+        }
+
+        &.done {
+            background: linear-gradient(90deg, #475230 0%, #3a4429 25%, #2d3426 50%, #212624 75%, #141326 100%);
+        }
+        
+        &.failed {
+            background: linear-gradient(90deg, #8952C0 0%, #6a448f 25%, #4c3663 50%, #322a40 75%, #141326 100%);
+        }
+        
+        &.upstream-failure {
+            background: linear-gradient(90deg, #FF6F61 0%, #bb5649 25%, #7a3e39 50%, #48302e 75%, #141326 100%);
+        }
+        
+        &.disabled {
+            background: linear-gradient(90deg, #D2F65C 0%, #9cb54a 25%, #6a773a 50%, #44482c 75%, #141326 100%);
+        }
+        
+        &.upstream-disabled {
+            background: linear-gradient(90deg, #5C92F6 0%, #4a6fb8 25%, #394f7d 50%, #283651 75%, #141326 100%);
+        }
+    }
+}
+
+.table-container {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    background: #141326;
+    padding: 0;
+    overflow: hidden;
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        
+        thead th {
+            text-align: left;
+            padding: 20px 20px;
+            color: #EDEAF1;
+            font-size: 15px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            white-space: nowrap;
+            background: #141326;
+        }
+
+        tbody td {
+            padding: 16px 20px;
+            font-size: 15px;
+            color: rgba(237, 234, 241, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: #141326;
+
+            &.tag-cell {
+                color: #FFFFFF;
+                font-weight: 600;
+                font-size: 15px;
+            }
+
+            &.script-cell {
+                color: rgba(237, 234, 241, 0.85);
+                font-size: 15px;
+            }
+        }
+
+        tbody tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-indicator {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            
+            &.done { background: #475230; }
+            &.running { background: #FF6F61; box-shadow: 0 0 12px rgba(255, 111, 97, 0.7); }
+            &.pending { background: #52304C; }
+            &.failed { background: #8952C0; box-shadow: 0 0 12px rgba(137, 82, 192, 0.7); }
+            &.batch-running { background: #5C92F6; box-shadow: 0 0 12px rgba(92, 146, 246, 0.7); }
+            &.upstream-failure { background: #FF6F61; }
+            &.disabled { background: #D2F65C; }
+            &.upstream-disabled { background: #5C92F6; }
+        }
+
+        .actions-cell {
+            white-space: nowrap;
+             
+            .action-btn {
+                background: transparent;
+                border: none;
+                color: rgba(237, 234, 241, 0.5);
+                font-size: 24px;
+                cursor: pointer;
+                margin-right: 12px;
+                padding: 4px;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: #FFFFFF;
+                }
+                
+                &:last-child {
+                    color: #FF6F61;
+                    margin-right: 0;
+                    &:hover { color: #FF8A7F; }
+                }
+            }
+        }
+    }
+}

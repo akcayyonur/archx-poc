@@ -123,7 +123,12 @@
             <div class="bottom-grid">
                 <!-- System Topology -->
                 <div class="topology-section">
-                    <h3 class="section-title">System Topology</h3>
+                    <div class="topology-header">
+                        <h3 class="section-title">System Topology</h3>
+                        <button class="icon-btn fullscreen-btn" (click)="openTopologyFullscreen()">
+                            <ng-icon name="phosphorCornersOut"></ng-icon>
+                        </button>
+                    </div>
                     <div class="topology-chart-container" #topologyChart></div>
                 </div>
 
@@ -169,7 +174,9 @@
                             <div class="score-item">
                                 <span class="score-value">{{ item.score }}</span>
                                 <div class="score-actions">
-                                    <span class="score-icon">📊</span>
+                                    <span class="score-icon" (click)="openCorrelationChart(item)">
+                                        <ng-icon name="phosphorChartLine"></ng-icon>
+                                    </span>
                                     <span class="score-label" [class.strong]="item.label === 'STRONG'">{{ item.label }}</span>
                                 </div>
                             </div>
@@ -179,6 +186,64 @@
             </div>
             </div>
         </main>
+    </div>
+</div>
+
+<!-- Topology Fullscreen Modal -->
+<div class="topology-fullscreen-modal" *ngIf="topologyFullscreen" (click)="closeTopologyFullscreen()">
+    <div class="topology-fullscreen-content" (click)="$event.stopPropagation()">
+        <div class="topology-fullscreen-header">
+            <h2>System Topology - Full View</h2>
+            <button class="close-btn" (click)="closeTopologyFullscreen()">
+                <ng-icon name="phosphorCaretLeft"></ng-icon>
+            </button>
+        </div>
+        <div class="topology-fullscreen-chart" id="fullscreenTopologyChart"></div>
+    </div>
+</div>
+
+<!-- Correlation Chart Popup -->
+<div class="correlation-popup-overlay" *ngIf="correlationChartVisible" (click)="closeCorrelationChart()">
+    <div class="correlation-popup" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+            <h2>Correlation Chart</h2>
+            <div class="header-controls">
+                <div class="time-badge">showing last 24 hours</div>
+                <button class="close-btn" (click)="closeCorrelationChart()">
+                    <ng-icon name="phosphorX"></ng-icon>
+                </button>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <div class="chart-overlay-info">
+                <div class="chart-title">Correlation Chart : 0.9909</div>
+                <div class="custom-legend">
+                    <div class="legend-item">
+                        <span class="dot white"></span>
+                        <span>API_DataSync - /api/v1/productavailability-check-prod (Average Response Time)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="dot red"></span>
+                        <span>API_DataSync - /api/v1/productavailability-check-sim (Average Response Time)</span>
+                    </div>
+                </div>
+            </div>
+            <div #correlationChart style="width: 100%; height: 320px;"></div>
+        </div>
+
+        <div class="details-section">
+            <h3>Correlation Details</h3>
+            <div class="details-box">
+                <div class="metric-line">Metric 1: API_dataSync/api/v1/product-availability-check-prod (avg_response_time)</div>
+                <div class="metric-line">Metric 2: API_dataSync/api/v1/product-availability-check-sim(avg_response_time)</div>
+                <div class="stats-row">
+                    <div class="stat-item">Correlation: <span class="highlight">0.9909</span></div>
+                    <div class="stat-item">Data Points: <span>1261</span></div>
+                    <div class="stat-item">Common Timestamps: <span>1261</span></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

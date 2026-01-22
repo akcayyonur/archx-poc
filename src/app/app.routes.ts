@@ -23,6 +23,10 @@ export const routes: Routes = [
         loadComponent: () => import('@pages/dashboard/dashboard').then(m => m.Dashboard)
     },
     {
+        path: 'schedules',
+        loadComponent: () => import('@pages/schedules/schedules').then(m => m.Schedules)
+    },
+    {
         path: 'fields/tech',
         loadComponent: () => import('@pages/fields/tech/tech').then(m => m.Tech)
     },

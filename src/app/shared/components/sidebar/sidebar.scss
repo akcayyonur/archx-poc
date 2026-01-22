@@ -311,8 +311,15 @@
 
 .toggle-icon {
   font-size: 28px;
-  color: #1E1B2E;
-  transition: color 0.2s ease;
+  color: #070508 !important;
+  fill: #070508 !important;
+  stroke: #070508 !important;
+  transition: all 0.2s ease;
+  
+  svg {
+    color: #070508 !important;
+    fill: #070508 !important;
+  }
 }
 
 // Collapsed state adjustments

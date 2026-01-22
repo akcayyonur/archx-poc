@@ -61,10 +61,15 @@
       </div>
     </div>
 
-    <!-- Operational Insights -->
     <div class="nav-item" (click)="navigateToOperationalInsights()" data-tooltip="Operational Insights" [class.active]="isRouteActive('/anomaly-insights')">
       <ng-icon name="phosphorSealWarning" class="nav-icon"></ng-icon>
       <span class="nav-label" *ngIf="isExpanded">Operational Insights</span>
+    </div>
+
+    <!-- Schedules -->
+    <div class="nav-item" (click)="navigateToSchedules()" data-tooltip="Schedules" [class.active]="isRouteActive('/schedules')">
+      <ng-icon name="phosphorCalendarBlank" class="nav-icon"></ng-icon>
+      <span class="nav-label" *ngIf="isExpanded">Schedules</span>
     </div>
   </nav>
 
@@ -93,7 +98,7 @@
     <div class="toggle-menu" (click)="toggleSidebar()">
       <span class="toggle-label" *ngIf="isExpanded">Hide Menu</span>
       <div class="toggle-icon-wrapper">
-        <ng-icon [name]="isExpanded ? 'phosphorArrowCircleLeft' : 'phosphorArrowCircleRight'" class="toggle-icon"></ng-icon>
+        <ng-icon [name]="isExpanded ? 'phosphorArrowCircleLeft' : 'phosphorArrowCircleRight'" class="toggle-icon" style="color: #070508;"></ng-icon>
       </div>
     </div>
   </div>

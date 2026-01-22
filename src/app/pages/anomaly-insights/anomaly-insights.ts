@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { DatePickerModule } from 'primeng/datepicker';
 import { Sidebar } from '@shared/components/sidebar/sidebar';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { phosphorTrafficCone, phosphorSortAscending, phosphorSortDescending, phosphorInfo, phosphorCaretLeft, phosphorCaretRight, phosphorPulse, phosphorCornersOut, phosphorCloudArrowDown, phosphorCaretDown, phosphorHandPalm, phosphorCrop, phosphorArrowsLeftRight, phosphorMagnifyingGlassPlus, phosphorMagnifyingGlassMinus, phosphorArrowCounterClockwise } from '@ng-icons/phosphor-icons/regular';
+import { phosphorTrafficCone, phosphorSortAscending, phosphorSortDescending, phosphorInfo, phosphorCaretLeft, phosphorCaretRight, phosphorPulse, phosphorCornersOut, phosphorCloudArrowDown, phosphorCaretDown, phosphorHandPalm, phosphorCrop, phosphorArrowsLeftRight, phosphorMagnifyingGlassPlus, phosphorMagnifyingGlassMinus, phosphorArrowCounterClockwise, phosphorWarning } from '@ng-icons/phosphor-icons/regular';
 import { DEMO_ANOMALY_LIST } from '@shared/constants/demo-data.constants';
 import { AnomalyRecord } from '@shared/models/demo-data.model';
 import { AnomalyContextMenu, ContextMenuAction } from '@shared/components/anomaly-context-menu/anomaly-context-menu';
@@ -14,14 +14,16 @@ import * as echarts from 'echarts';
 @Component({
   selector: 'app-anomaly-insights',
   imports: [CommonModule, Sidebar, FormsModule, DatePickerModule, NgIcon, AnomalyContextMenu],
-  viewProviders: [provideIcons({ phosphorTrafficCone, phosphorSortAscending, phosphorSortDescending, phosphorInfo, phosphorCaretLeft, phosphorCaretRight, phosphorPulse, phosphorCornersOut, phosphorCloudArrowDown, phosphorCaretDown, phosphorHandPalm, phosphorCrop, phosphorArrowsLeftRight, phosphorMagnifyingGlassPlus, phosphorMagnifyingGlassMinus, phosphorArrowCounterClockwise })],
+  viewProviders: [provideIcons({ phosphorTrafficCone, phosphorSortAscending, phosphorSortDescending, phosphorInfo, phosphorCaretLeft, phosphorCaretRight, phosphorPulse, phosphorCornersOut, phosphorCloudArrowDown, phosphorCaretDown, phosphorHandPalm, phosphorCrop, phosphorArrowsLeftRight, phosphorMagnifyingGlassPlus, phosphorMagnifyingGlassMinus, phosphorArrowCounterClockwise, phosphorWarning })],
   templateUrl: './anomaly-insights.html',
   styleUrl: './anomaly-insights.scss'
 })
 export class AnomalyInsights implements AfterViewInit, OnDestroy {
   @ViewChild('serviceModelChart') chartElement!: ElementRef;
+  @ViewChild('anomalousDimensionsChart') anomalousChartElement!: ElementRef;
   
   private chart: echarts.ECharts | null = null;
+  private anomalousChart: echarts.ECharts | null = null;
   private resizeObserver: ResizeObserver | null = null;
 
   anomalies: AnomalyRecord[] = DEMO_ANOMALY_LIST.map(a => ({ ...a, timeRange: { ...a.timeRange } }));
@@ -47,6 +49,22 @@ export class AnomalyInsights implements AfterViewInit, OnDestroy {
   contextMenuVisible = false;
   contextMenuPosition = { x: 0, y: 0 };
 
+  // Event dialog properties
+  eventDialogVisible = false;
+  eventForm = {
+    title: '',
+    description: '',
+    severity: 'Moderate',
+    category: 'Performance',
+    status: 'Open',
+    assignedTeam: 'DevOps',
+    application: ''
+  };
+
+  // Chart time range properties
+  timeRanges: string[] = ['24H', '5D', '1W', '1M'];
+  selectedTimeRange: string = '24H';
+
   constructor(private router: Router) {
     // Removed randomization to use static demo data with full dates
   }
@@ -66,14 +84,23 @@ export class AnomalyInsights implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.initChart();
     
+    // Initialize new Anomalous Dimensions chart
+    this.initAnomalousChart();
+    
     // Handle resize
     this.resizeObserver = new ResizeObserver(() => {
         if (this.chart) {
             this.chart.resize();
         }
+        if (this.anomalousChart) {
+            this.anomalousChart.resize();
+        }
     });
     if (this.chartElement?.nativeElement) {
         this.resizeObserver.observe(this.chartElement.nativeElement);
+    }
+    if (this.anomalousChartElement?.nativeElement) {
+        this.resizeObserver.observe(this.anomalousChartElement.nativeElement);
     }
   }
 
@@ -81,6 +108,10 @@ export class AnomalyInsights implements AfterViewInit, OnDestroy {
     if (this.chart) {
         this.chart.dispose();
         this.chart = null;
+    }
+    if (this.anomalousChart) {
+        this.anomalousChart.dispose();
+        this.anomalousChart = null;
     }
     if (this.resizeObserver) {
         this.resizeObserver.disconnect();
@@ -529,7 +560,7 @@ export class AnomalyInsights implements AfterViewInit, OnDestroy {
             console.log(`Assigned to ${action.value} for ${this.anomalies[anomalyIndex].entity}`);
             break;
           case 'createEvent':
-            console.log(`Event created for ${this.anomalies[anomalyIndex].entity}`);
+            this.showEventDialog();
             break;
           case 'relateSelected':
             console.log(`Related to ${action.value} for ${this.anomalies[anomalyIndex].entity}`);
@@ -550,5 +581,219 @@ export class AnomalyInsights implements AfterViewInit, OnDestroy {
 
   closeContextMenu(): void {
     this.contextMenuVisible = false;
+  }
+
+  // Calculate age time from time range (duration)
+  calculateAgeTime(anomaly: AnomalyRecord): string {
+    const start = AnomalyInsights.parseDateTime(anomaly.timeRange.start);
+    const end = AnomalyInsights.parseDateTime(anomaly.timeRange.end);
+    
+    if (!start || !end) return '0h 00m';
+    
+    const diffMs = end.getTime() - start.getTime();
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    return `${hours}h ${minutes.toString().padStart(2, '0')}m`;
+  }
+
+  // Format date time for Event Monitor table
+  formatDateTime(dateStr: string): string {
+    const date = AnomalyInsights.parseDateTime(dateStr);
+    if (!date) return dateStr;
+    
+    const month = (date.getMonth() + 1).toString();
+    const day = date.getDate().toString();
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const ampm = date.getHours() >= 12 ? 'pm' : 'am';
+    
+    return `${month}/${day}/${year} ${hours}:${minutes}:${seconds} ${ampm}`;
+  }
+
+  // Show event dialog
+  showEventDialog(): void {
+    this.eventDialogVisible = true;
+  }
+
+  // Close event dialog
+  closeEventDialog(): void {
+    this.eventDialogVisible = false;
+    // Reset form
+    this.eventForm = {
+      title: '',
+      description: '',
+      severity: 'Moderate',
+      category: 'Performance',
+      status: 'Open',
+      assignedTeam: 'DevOps',
+      application: ''
+    };
+  }
+
+  // Save event and add to tables
+  saveEvent(): void {
+    if (!this.eventForm.title) {
+      return; // Don't save if title is empty
+    }
+
+    // Create new anomaly record from event
+    let eventTime = new Date();
+    // Use visible date range end time if available to ensure visibility
+    if (this.dateRange.end) {
+        eventTime = new Date(this.dateRange.end.getTime() - 60000); // 1 min before end
+    }
+    
+    const nowStr = `${eventTime.getDate().toString().padStart(2, '0')}.${(eventTime.getMonth() + 1).toString().padStart(2, '0')}.${eventTime.getFullYear()} ${eventTime.getHours().toString().padStart(2, '0')}:${eventTime.getMinutes().toString().padStart(2, '0')}`;
+    
+    const newAnomaly: AnomalyRecord = {
+      id: `manual-${Date.now()}`,
+      anomaly: this.eventForm.title,
+      entity: this.eventForm.application || 'manual-event',
+      severity: this.eventForm.severity as 'Critical' | 'High' | 'Moderate',
+      status: 'Active' as const,
+      timeRange: {
+        start: nowStr,
+        end: nowStr
+      }
+    };
+
+    // Add to the beginning of anomalies array (create new reference for change detection)
+    this.anomalies = [newAnomaly, ...this.anomalies];
+    
+    // Close dialog
+    this.closeEventDialog();
+  }
+
+  // --- Chart Logic ---
+
+  selectTimeRange(range: string): void {
+    this.selectedTimeRange = range;
+    this.updateAnomalousChartData();
+  }
+
+  initAnomalousChart(): void {
+    if (!this.anomalousChartElement) return;
+
+    this.anomalousChart = echarts.init(this.anomalousChartElement.nativeElement);
+    this.updateAnomalousChartData();
+  }
+
+  updateAnomalousChartData(): void {
+    if (!this.anomalousChart) return;
+
+    // Generate mock data based on time range
+    let points = 24;
+    let category = [];
+    let seriesData1 = [];
+    let seriesData2 = [];
+    let seriesData3 = [];
+
+    switch (this.selectedTimeRange) {
+      case '24H': points = 24; break;
+      case '5D': points = 60; break;
+      case '1W': points = 84; break;
+      case '1M': points = 120; break;
+    }
+
+    for (let i = 0; i < points; i++) {
+        category.push(i.toString());
+        seriesData1.push(Math.floor(Math.random() * 40) + 10);
+        seriesData2.push(Math.floor(Math.random() * 30) + 5);
+        seriesData3.push(Math.floor(Math.random() * 20));
+    }
+
+    const option: echarts.EChartsOption = {
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'axis',
+            backgroundColor: 'rgba(31, 30, 51, 0.95)',
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            textStyle: { color: '#EDEAF1' },
+            position: (point, params, dom, rect, size) => {
+              // Ensure tooltip stays within chart
+              const [x, y] = point;
+              return [x, '10%'];
+            },
+            axisPointer: {
+                type: 'cross',
+                lineStyle: { color: 'rgba(255, 255, 255, 0.3)' }
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            top: '10%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: category,
+            boundaryGap: false,
+            axisLine: { show: false },
+            axisTick: { show: false },
+            axisLabel: { 
+                color: 'rgba(255, 255, 255, 0.5)',
+                interval: Math.floor(points / 6)
+            },
+            splitLine: { show: false } // Disable vertical grid lines for cleaner look or enable
+        },
+        yAxis: {
+            type: 'value',
+            splitLine: {
+                lineStyle: { color: 'rgba(255, 255, 255, 0.05)' }
+            },
+            axisLabel: { color: 'rgba(255, 255, 255, 0.5)' }
+        },
+        series: [
+            {
+                name: 'Data 1',
+                type: 'line',
+                data: seriesData1,
+                smooth: true,
+                symbol: 'none',
+                lineStyle: { width: 2, color: '#9C7FCF' },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(156, 127, 207, 0.4)' },
+                        { offset: 1, color: 'rgba(156, 127, 207, 0.01)' }
+                    ])
+                }
+            },
+            {
+                name: 'Data 2',
+                type: 'line',
+                data: seriesData2,
+                smooth: true,
+                symbol: 'none',
+                lineStyle: { width: 2, color: '#AFCB52' },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(175, 203, 82, 0.4)' },
+                        { offset: 1, color: 'rgba(175, 203, 82, 0.01)' }
+                    ])
+                }
+            },
+            {
+                name: 'Data 3',
+                type: 'line',
+                data: seriesData3,
+                smooth: true,
+                symbol: 'none',
+                lineStyle: { width: 2, color: '#3A6082' },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(58, 96, 130, 0.4)' },
+                        { offset: 1, color: 'rgba(58, 96, 130, 0.01)' }
+                    ])
+                }
+            }
+        ]
+    };
+
+    this.anomalousChart.setOption(option);
   }
 }

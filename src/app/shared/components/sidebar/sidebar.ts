@@ -20,7 +20,8 @@ import {
   phosphorEye,
   phosphorGearSix,
   phosphorArrowCircleLeft,
-  phosphorArrowCircleRight
+  phosphorArrowCircleRight,
+  phosphorCalendarBlank
 } from '@ng-icons/phosphor-icons/regular';
 import { Agent } from '../../models/demo-data.model';
 
@@ -41,9 +42,9 @@ import { Agent } from '../../models/demo-data.model';
     phosphorCaretDown: phosphorCaretDownDuotone,
     phosphorArrowCircleLeft,
     phosphorArrowCircleRight,
-    phosphorEyeSlash,
     phosphorEye,
-    phosphorAlignBottom: phosphorAlignBottomDuotone
+    phosphorAlignBottom: phosphorAlignBottomDuotone,
+    phosphorCalendarBlank
   })],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
@@ -157,6 +158,10 @@ export class Sidebar {
 
   navigateToOperationalInsights(): void {
     this.collapseAndNavigate(['/anomaly-insights']);
+  }
+
+  navigateToSchedules(): void {
+    this.collapseAndNavigate(['/schedules']);
   }
 
   logout(): void {

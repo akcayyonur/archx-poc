@@ -685,6 +685,34 @@ $orange: #fb923c;
         }
     }
 
+    .time-range-controls {
+        display: flex;
+        gap: 8px;
+        
+        .time-range-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            &:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff;
+            }
+            
+            &.active {
+                background: #6941C6;
+                border-color: #7F56D9;
+                color: #fff;
+                box-shadow: 0 0 0 1px #7F56D9;
+            }
+        }
+    }
+
     .right-chart-tools {
         display: flex;
         align-items: center;
@@ -903,6 +931,235 @@ $orange: #fb923c;
                 color: rgba(255, 255, 255, 0.7);
                 line-height: 1;
             }
+        }
+    }
+}
+
+// Event Monitor Table Styles
+.event-monitor-container {
+    display: flex;
+    flex-direction: column;
+    background: #201F32;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 24px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+.event-monitor-header {
+    padding: 16px 24px;
+    background: #2D2C3A;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    
+    h3 {
+        font-size: 18px;
+        font-weight: 500;
+        color: #fff;
+        margin: 0;
+    }
+}
+
+.event-monitor-table-wrapper {
+    max-height: 500px;
+    overflow-y: auto;
+    
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        
+        &:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    }
+}
+
+.event-monitor-table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    thead {
+        position: sticky;
+        top: 0;
+        background: #2D2C3A;
+        z-index: 10;
+        
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            white-space: nowrap;
+            
+            &:first-child {
+                width: 80px;
+                text-align: center;
+            }
+            
+            &:nth-child(2) {
+                width: 100px;
+            }
+        }
+    }
+    
+    tbody {
+        tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s ease;
+            
+            &:hover {
+                background: rgba(255, 255, 255, 0.03);
+            }
+            
+            td {
+                padding: 10px 16px;
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.85);
+                
+                &.anomaly-name {
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+}
+
+.severity-cell {
+    text-align: center !important;
+    
+    .severity-icon {
+        font-size: 18px;
+        
+        // Severity-based colors
+        &.severity-critical {
+            color: #FF453A;
+        }
+        
+        &.severity-high {
+            color: #FF9F0A;
+        }
+        
+        &.severity-moderate {
+            color: #FFD60A;
+        }
+    }
+}
+
+// Create Event Dialog Styles
+.event-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.event-dialog {
+    width: 600px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(10.05px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    
+    h2 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .event-input,
+    .event-textarea,
+    .event-select {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-family: inherit;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+        transition: all 0.2s ease;
+        outline: none;
+        
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        &:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        &:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+        }
+    }
+    
+    .event-textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .event-select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgba(255,255,255,0.4)' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        padding-right: 48px;
+        
+        option {
+            background: #2D2C3A;
+            color: #fff;
+        }
+    }
+    
+    .event-save-btn {
+        margin-top: 16px;
+        align-self: flex-end;
+        background: #EDEAF1;
+        color: #1F1E33;
+        border: none;
+        border-radius: 20px;
+        padding: 10px 32px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        &:active {
+            transform: translateY(0);
         }
     }
 }

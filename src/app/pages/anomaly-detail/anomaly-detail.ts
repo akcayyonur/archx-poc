@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { DatePickerModule } from 'primeng/datepicker';
 import { Sidebar } from '@shared/components/sidebar/sidebar';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { phosphorCaretLeft, phosphorCaretDown, phosphorFunnel } from '@ng-icons/phosphor-icons/regular';
+import { phosphorCaretLeft, phosphorCaretDown, phosphorFunnel, phosphorCornersOut, phosphorChartLine, phosphorX } from '@ng-icons/phosphor-icons/regular';
 import { phosphorMagnifyingGlassBold } from '@ng-icons/phosphor-icons/bold';
 import * as echarts from 'echarts';
 
@@ -23,20 +23,24 @@ interface CorrelationScore {
 @Component({
   selector: 'app-anomaly-detail',
   imports: [CommonModule, Sidebar, FormsModule, DatePickerModule, NgIcon],
-  viewProviders: [provideIcons({ phosphorCaretLeft, phosphorMagnifyingGlassBold, phosphorCaretDown, phosphorFunnel })],
+  viewProviders: [provideIcons({ phosphorCaretLeft, phosphorMagnifyingGlassBold, phosphorCaretDown, phosphorFunnel, phosphorCornersOut, phosphorChartLine, phosphorX })],
   templateUrl: './anomaly-detail.html',
   styleUrl: './anomaly-detail.scss'
 })
 export class AnomalyDetail implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('trendChart') trendChartElement!: ElementRef;
   @ViewChild('topologyChart') topologyChartElement!: ElementRef;
+  @ViewChild('correlationChart') correlationChartElement!: ElementRef;
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
   private trendChart: echarts.ECharts | null = null;
   private topologyChart: echarts.ECharts | null = null;
+  private correlationChart: echarts.ECharts | null = null;
   private resizeObserver: ResizeObserver | null = null;
+  
+  topologyFullscreen = false;
 
   anomalyId: string = '';
   anomalyData: any = null;
@@ -149,61 +153,241 @@ export class AnomalyDetail implements OnInit, AfterViewInit, OnDestroy {
 
     this.trendChart = echarts.init(this.trendChartElement.nativeElement);
 
-    const xData = ['May 30\n14:00', 'May 30\n20:00', 'May 30\n23:00', 'May 30\n02:00', 'May 30\n03:00', 'May 30\n06:00', 'May 30\n09:00', 'May 30\n11:00'];
-    const yData = [1000, 1200, 1500, 3500, 3200, 2500, 1800, 1200];
+      // Generate more complex time series data
+    const timePoints: string[] = [];
+    const responseTimeData: number[] = [];
+    const p95Data: number[] = [];
+    const p99Data: number[] = [];
+    const baseTime = new Date('2024-05-30T14:00:00');
+    
+    for (let i = 0; i < 90; i++) {
+      const time = new Date(baseTime.getTime() + i * 5 * 60000); // 5-minute intervals
+      const hours = time.getHours().toString().padStart(2, '0');
+      const minutes = time.getMinutes().toString().padStart(2, '0');
+      timePoints.push(`${hours}:${minutes}`);
+      
+      // Create varied response time data with realistic patterns
+      let baseValue = 800 + Math.random() * 400;
+      
+      // Add some peaks and valleys
+      if (i >= 20 && i <= 28) {
+        // Major spike
+        baseValue = 2800 + Math.random() * 800 + (i - 24) * (i - 24) * -50;
+      } else if (i >= 55 && i <= 62) {
+        // Secondary spike
+        baseValue = 2200 + Math.random() * 400;
+      } else if (i >= 40 && i <= 45) {
+        // Small elevation
+        baseValue = 1600 + Math.random() * 200;
+      }
+      
+      responseTimeData.push(Math.round(baseValue));
+      p95Data.push(Math.round(baseValue * 1.3)); // P95 is higher
+      p99Data.push(Math.round(baseValue * 1.6)); // P99 is even higher
+    }
 
     const option: echarts.EChartsOption = {
+      backgroundColor: 'transparent',
       grid: {
         left: 60,
+        right: 40,
+        top: 40,
+        bottom: 50,
+        containLabel: false
+      },
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: 'rgba(31, 30, 51, 0.95)',
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        textStyle: {
+          color: '#EDEAF1'
+        },
+        axisPointer: {
+          type: 'cross',
+          lineStyle: {
+            color: 'rgba(255, 255, 255, 0.3)',
+            type: 'dashed'
+          }
+        }
+      },
+      legend: {
+        data: ['Avg Response Time', 'P95', 'P99'],
+        top: 10,
         right: 20,
-        top: 20,
-        bottom: 50
+        textStyle: {
+          color: 'rgba(255, 255, 255, 0.7)',
+          fontSize: 11
+        },
+        itemWidth: 20,
+        itemHeight: 8
       },
       xAxis: {
         type: 'category',
-        data: xData,
-        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-        axisLabel: { color: 'rgba(255,255,255,0.5)', fontSize: 10 },
-        splitLine: { show: false }
+        data: timePoints,
+        boundaryGap: false,
+        axisLine: { 
+          lineStyle: { color: 'rgba(255,255,255,0.1)' } 
+        },
+        axisTick: {
+          show: false
+        },
+        axisLabel: { 
+          color: 'rgba(255,255,255,0.5)', 
+          fontSize: 10,
+          interval: 14 // Show every 15th label
+        },
+        splitLine: { 
+          show: true,
+          lineStyle: { 
+            color: 'rgba(255,255,255,0.05)', 
+            type: 'solid' 
+          } 
+        }
       },
       yAxis: {
         type: 'value',
-        min: 0,
-        max: 4000,
-        axisLine: { show: false },
-        axisLabel: { color: 'rgba(255,255,255,0.5)', fontSize: 10 },
-        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } }
-      },
-      series: [{
-        type: 'line',
-        data: yData,
-        smooth: true,
-        symbol: 'none',
-        lineStyle: { color: '#C8E972', width: 2 },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(200, 233, 114, 0.4)' },
-            { offset: 1, color: 'rgba(200, 233, 114, 0.05)' }
-          ])
+        name: 'ms',
+        nameTextStyle: {
+          color: 'rgba(255,255,255,0.5)',
+          fontSize: 10,
+          align: 'right'
         },
-        markPoint: {
-          symbol: 'circle',
-          symbolSize: 10,
-          data: [
-            { name: 'Peak', type: 'max', itemStyle: { color: '#FF6B6B' } }
-          ],
-          label: { show: false }
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: { 
+          color: 'rgba(255,255,255,0.5)', 
+          fontSize: 10,
+          formatter: '{value}'
+        },
+        splitLine: { 
+          lineStyle: { 
+            color: 'rgba(255,255,255,0.05)', 
+            type: 'solid' 
+          } 
         }
-      }]
+      },
+      series: [
+        {
+          name: 'P99',
+          type: 'line',
+          data: p99Data,
+          smooth: true,
+          symbol: 'none',
+          lineStyle: { 
+            color: '#FF6B6B', 
+            width: 1.5,
+            opacity: 0.6
+          },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(255, 107, 107, 0.15)' },
+              { offset: 1, color: 'rgba(255, 107, 107, 0.02)' }
+            ])
+          },
+          z: 1
+        },
+        {
+          name: 'P95',
+          type: 'line',
+          data: p95Data,
+          smooth: true,
+          symbol: 'none',
+          lineStyle: { 
+            color: '#FFD166', 
+            width: 1.5,
+            opacity: 0.7
+          },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(255, 209, 102, 0.2)' },
+              { offset: 1, color: 'rgba(255, 209, 102, 0.03)' }
+            ])
+          },
+          z: 2
+        },
+        {
+          name: 'Avg Response Time',
+          type: 'line',
+          data: responseTimeData,
+          smooth: true,
+          symbol: 'none',
+          lineStyle: { 
+            color: '#C8E972', 
+            width: 2.5
+          },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(200, 233, 114, 0.35)' },
+              { offset: 1, color: 'rgba(200, 233, 114, 0.05)' }
+            ])
+          },
+          markPoint: {
+            symbol: 'circle',
+            symbolSize: 12,
+            data: [
+              { 
+                type: 'max', 
+                name: 'Peak',
+                itemStyle: { 
+                  color: '#FF453A',
+                  borderColor: '#fff',
+                  borderWidth: 2
+                },
+                label: {
+                  show: true,
+                  formatter: '{c}ms',
+                  color: '#fff',
+                  fontSize: 10,
+                  position: 'top'
+                }
+              }
+            ]
+          },
+          markLine: {
+            silent: true,
+            symbol: 'none',
+            lineStyle: {
+              color: '#FF9F0A',
+              type: 'dashed',
+              width: 1.5,
+              opacity: 0.6
+            },
+            data: [
+              {
+                yAxis: 2000,
+                label: {
+                  show: true,
+                  formatter: 'SLA',
+                  color: '#FF9F0A',
+                  fontSize: 10,
+                  position: 'insideEndTop'
+                }
+              }
+            ]
+          },
+          z: 3
+        }
+      ]
     };
 
     this.trendChart.setOption(option);
   }
 
-  private initTopologyChart() {
-    if (!this.topologyChartElement?.nativeElement) return;
+  private initTopologyChart(isFullscreen = false) {
+    let element: HTMLElement | null = null;
 
-    this.topologyChart = echarts.init(this.topologyChartElement.nativeElement);
+    if (isFullscreen) {
+        element = document.getElementById('fullscreenTopologyChart');
+    } else {
+        element = this.topologyChartElement?.nativeElement;
+    }
+
+    if (!element) return;
+
+    const chart = echarts.init(element);
+    if (!isFullscreen) {
+        this.topologyChart = chart;
+    }
 
     const nodes = [
       { name: 'API Gateway', x: 200, y: 100, symbolSize: 40, itemStyle: { color: '#9C7FCF' } },
@@ -250,7 +434,7 @@ export class AnomalyDetail implements OnInit, AfterViewInit, OnDestroy {
       }]
     };
 
-    this.topologyChart.setOption(option);
+    chart.setOption(option);
   }
 
   toggleInsight(insight: AIInsightItem) {
@@ -278,5 +462,132 @@ export class AnomalyDetail implements OnInit, AfterViewInit, OnDestroy {
     const parsed = new Date(year, (month ?? 1) - 1, day, hour, minute);
 
     return isNaN(parsed.getTime()) ? null : parsed;
+  }
+
+  openTopologyFullscreen(): void {
+    this.topologyFullscreen = true;
+    
+    // Reinitialize chart in fullscreen after view updates
+    setTimeout(() => {
+        this.initTopologyChart(true);
+    }, 100);
+  }
+
+  closeTopologyFullscreen() {
+    this.topologyFullscreen = false;
+  }
+
+  // Correlation Chart Popup
+  correlationChartVisible = false;
+  selectedCorrelationItem: any = null;
+
+  openCorrelationChart(item: any) {
+    this.selectedCorrelationItem = item;
+    this.correlationChartVisible = true;
+    setTimeout(() => {
+        this.initCorrelationChart();
+    }, 100);
+  }
+
+  closeCorrelationChart() {
+    this.correlationChartVisible = false;
+    if (this.correlationChart) {
+        this.correlationChart.dispose();
+        this.correlationChart = null;
+    }
+  }
+
+  private initCorrelationChart() {
+    if (!this.correlationChartElement) return;
+
+    this.correlationChart = echarts.init(this.correlationChartElement.nativeElement);
+    
+    // Generate mock data for last 24 hours (every 10 minutes)
+    const data1 = [];
+    const data2 = [];
+    const timestamps = [];
+    const now = new Date();
+    
+    for (let i = 0; i < 144; i++) {
+        const t = new Date(now.getTime() - (144 - i) * 10 * 60000);
+        const timeStr = `${t.getHours().toString().padStart(2, '0')}:${t.getMinutes().toString().padStart(2, '0')}`;
+        timestamps.push(timeStr);
+        
+        let base1 = 20000 + Math.random() * 5000;
+        let base2 = 18000 + Math.random() * 5000;
+        
+        // Add spike
+        if (i > 100 && i < 110) {
+            base1 += 380000;
+            base2 += 300000;
+        }
+        
+        data1.push(base1);
+        data2.push(base2);
+    }
+
+    const option: echarts.EChartsOption = {
+        backgroundColor: 'transparent',
+        grid: {
+            top: 100,
+            right: 20,
+            bottom: 30,
+            left: 60,
+            containLabel: true
+        },
+        tooltip: {
+            trigger: 'axis',
+            backgroundColor: 'rgba(20, 19, 38, 0.9)',
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            textStyle: { color: '#fff' },
+            position: function (pt: any) {
+                return [pt[0], '10%'];
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: timestamps,
+            boundaryGap: false,
+            axisLine: { lineStyle: { color: 'rgba(255, 255, 255, 0.1)' } },
+            axisLabel: { color: 'rgba(255, 255, 255, 0.5)' },
+            splitLine: {
+                show: true,
+                lineStyle: { color: 'rgba(255, 255, 255, 0.05)' }
+            }
+        },
+        yAxis: {
+            type: 'value',
+            splitLine: {
+                show: true,
+                lineStyle: { color: 'rgba(255, 255, 255, 0.05)' }
+            },
+            axisLabel: { color: 'rgba(255, 255, 255, 0.5)' }
+        },
+        series: [
+            {
+                name: 'API_dataSync_primary',
+                type: 'line',
+                data: data1,
+                showSymbol: false,
+                lineStyle: { width: 2, color: '#FFFFFF' },
+                itemStyle: { color: '#FFFFFF' }
+            },
+            {
+                name: 'API_dataSync_secondary',
+                type: 'line',
+                data: data2,
+                showSymbol: false,
+                lineStyle: { width: 2, color: '#FF453A' },
+                itemStyle: { color: '#FF453A' }
+            }
+        ]
+    };
+
+    this.correlationChart.setOption(option);
+    
+    // Handle resize
+    new ResizeObserver(() => {
+        this.correlationChart?.resize();
+    }).observe(this.correlationChartElement.nativeElement);
   }
 }

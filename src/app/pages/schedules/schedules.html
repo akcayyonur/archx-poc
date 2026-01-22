@@ -1,0 +1,126 @@
+<div class="page-container">
+    <app-sidebar></app-sidebar>
+
+    <div class="content-container">
+        <header class="header-section">
+            <div class="title-container">
+                <ng-icon name="phosphorCalendarBlank" style="font-size: 64px; color: #FFFFFF;"></ng-icon>
+                <div class="title-text-container">
+                    <h1>Schedules</h1>
+                    <p>Monitor and manage automated task schedules and execution status.</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-main">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <!-- Row 1 -->
+                <div class="stat-card pending">
+                    <div class="card-icon"><ng-icon name="phosphorPause"></ng-icon></div>
+                    <div class="card-info">
+                        <span class="label">Pending<br>Tasks</span>
+                        <span class="value">{{ taskStats.pendingTasks }}</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card running">
+                    <div class="card-icon"><ng-icon name="phosphorPlay"></ng-icon></div>
+                    <div class="card-info">
+                        <span class="label">Running<br>Tasks</span>
+                        <span class="value">{{ taskStats.runningTasks }}</span>
+                    </div>
+                </div>
+
+                <div class="stat-card batch-running">
+                    <div class="card-icon"><ng-icon name="phosphorQueue"></ng-icon></div>
+                    <div class="card-info">
+                        <span class="label">Batch Running<br>Tasks</span>
+                        <span class="value">{{ taskStats.batchRunningTasks }}</span>
+                    </div>
+                </div>
+
+                <div class="stat-card done">
+                    <div class="card-icon"><ng-icon name="phosphorCheckCircle"></ng-icon></div>
+                    <div class="card-info">
+                        <span class="label">Done<br>Tasks</span>
+                        <span class="value">{{ taskStats.doneTasks }}</span>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="stat-card failed">
+                    <div class="card-icon"><ng-icon name="phosphorWarning"></ng-icon></div>
+                    <div class="card-info">
+                        <span class="label">Failed<br>Tasks</span>
+                        <span class="value">{{ taskStats.failedTasks }}</span>
+                    </div>
+                </div>
+
+                <div class="stat-card upstream-failure">
+                    <div class="card-icon"><ng-icon name="phosphorWarning"></ng-icon></div>
+                    <div class="card-info">
+                        <span class="label">Upstream<br>Failure</span>
+                        <span class="value">{{ taskStats.upstreamFailure }}</span>
+                    </div>
+                </div>
+
+                <div class="stat-card disabled">
+                    <div class="card-icon"><ng-icon name="phosphorProhibit"></ng-icon></div>
+                    <div class="card-info">
+                        <span class="label">Disabled<br>Tasks</span>
+                        <span class="value">{{ taskStats.disabledTasks }}</span>
+                    </div>
+                </div>
+
+                <div class="stat-card upstream-disabled">
+                    <div class="card-icon"><ng-icon name="phosphorShieldWarning"></ng-icon></div>
+                    <div class="card-info">
+                        <span class="label">Upstream<br>Disabled</span>
+                        <span class="value">{{ taskStats.upstreamDisabled }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>TAG</th>
+                            <th>Script</th>
+                            <th>Time Zone</th>
+                            <th>Start Time</th>
+                            <th>Interval</th>
+                            <th>Duration</th>
+                            <th>Last Run Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (task of scheduleData; track task.tag) {
+                            <tr>
+                                <td class="tag-cell">{{ task.tag }}</td>
+                                <td class="script-cell">{{ task.script }}</td>
+                                <td>{{ task.timeZone }}</td>
+                                <td>{{ task.startTime }}</td>
+                                <td>{{ task.interval }}</td>
+                                <td>{{ task.duration }}</td>
+                                <td>{{ task.lastRunTime }}</td>
+                                <td class="status-cell">
+                                     <div class="status-indicator" [ngClass]="getStatusClass(task.status)"></div>
+                                </td>
+                                <td class="actions-cell">
+                                    <button class="action-btn" title="History"><ng-icon name="phosphorClockCounterClockwise"></ng-icon></button>
+                                    <button class="action-btn" title="Edit"><ng-icon name="phosphorPencilSimple"></ng-icon></button>
+                                    <button class="action-btn" title="Delete"><ng-icon name="phosphorTrash"></ng-icon></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
